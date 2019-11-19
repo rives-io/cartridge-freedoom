@@ -23,7 +23,11 @@ CC=$(CROSS_COMPILE)gcc  # gcc or g++
 CFLAGS+=-ggdb3 -Os
 LDFLAGS+=-Wl,--gc-sections
 CFLAGS+=-ggdb3 -Wall -DNORMALUNIX -DLINUX -DSNDSERV # -DUSEASM
-LIBS+=-lm -lc -lSDL
+LIBS+=-lm -lc
+
+ifneq ($(NOSDL),1)
+	LIBS+= -lSDL
+endif
 
 # subdirectory for objects
 OBJDIR=build
