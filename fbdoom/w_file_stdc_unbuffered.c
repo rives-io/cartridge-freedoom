@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -92,7 +93,8 @@ size_t W_StdC_Read(wad_file_t *wad, unsigned int offset,
                    void *buffer, size_t buffer_len)
 {
     stdc_wad_file_t *stdc_wad;
-    size_t result;
+    size_t result = 0;
+    int rc;
 
     stdc_wad = (stdc_wad_file_t *) wad;
 
@@ -102,7 +104,21 @@ size_t W_StdC_Read(wad_file_t *wad, unsigned int offset,
 
     // Read into the buffer.
 
-    result = read(stdc_wad->fd, buffer, buffer_len);
+    do {
+
+        rc = read(stdc_wad->fd, (char *)buffer + result, buffer_len - result);
+
+        if (rc <= 0) {
+
+            if (rc < 0 && errno == EINTR)
+                continue;
+
+            break;
+        }
+
+        result += rc;
+
+    } while (result < buffer_len);
 
     return result;
 }
