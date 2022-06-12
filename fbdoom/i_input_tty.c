@@ -280,6 +280,7 @@ static int kbd_init(void)
     char *files_to_try[] = {"/dev/tty", "/dev/console", NULL};
     int i;
     int flags;
+    int found = 0;
 
     /* First we need to find a file descriptor that represents the
        system's keyboard. This should be /dev/tty, /dev/console,
@@ -293,6 +294,7 @@ static int kbd_init(void)
         /* See if this is valid for our purposes. */
         if (tty_is_kbd(kb)) {
             printf("Using keyboard on %s.\n", files_to_try[i]);
+            found = 1;
             break;
         }
         close(kb);
@@ -303,8 +305,14 @@ static int kbd_init(void)
        might point to a console. This is not especially likely. */
     if (files_to_try[i] == NULL) {
         for (kb = 0; kb < 3; kb++) {
-            if (tty_is_kbd(i)) break;
+            if (tty_is_kbd(i)) {
+                found = 1;
+                break;
+            }
         }
+    }
+
+    if (!found) {
         printf("Unable to find a file descriptor associated with "\
                 "the keyboard.\n" \
                 "Perhaps you're not using a virtual terminal?\n");
