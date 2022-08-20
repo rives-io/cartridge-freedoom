@@ -277,7 +277,7 @@ void kbd_shutdown(void)
 static int kbd_init(void)
 {
     struct termios new_term;
-    char *files_to_try[] = {"/dev/tty", "/dev/console", NULL};
+    char *files_to_try[] = {"/dev/tty", "/dev/tty0", "/dev/console", NULL};
     int i;
     int flags;
     int found = 0;
