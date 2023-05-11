@@ -8,30 +8,30 @@ You can see a video of this in action in [this tweet](https://twitter.com/edubar
 
 First make sure you have the following requirements:
  - Your host system is using Linux, this is the only supported platform at this moment.
- - You have [machine-emulator v0.13.0](https://github.com/cartesi/machine-emulator/releases/tag/v0.13.0) is installed, and its library should be available in `/opt/cartesi/lib/libcartesi.so`. Make sure you are using this exact version, there are hard coded constants to work with exactly this version of the emulator.
+ - You have [machine-emulator v0.13.0](https://github.com/cartesi/machine-emulator/releases/tag/v0.13.0) installed, and its library should be available in `/opt/cartesi/lib/libcartesi.so`. Make sure you are using this exact version, there are hard coded constants to work with exactly this version of the emulator.
  - You have the GCC compiler installed.
 
-First download `images/fbdoom_rootfs.ext2` with `make download-rootfs`, or build it `make rootfs`.
+First download `images/fbdoom_rootfs.ext2` with `make download-rootfs`, or build it with `make rootfs`.
 Then simply run `make test` to compile everything and test.
 The DOOM should pop-up in a few seconds for you to play.
 
 ## How to build rootfs
 
-In case you want to patch sources inside `fbdoom`, you need to rebuild it and its rootfs.
+In case you want to patch sources inside `fbdoom`, you will need to rebuild it and its rootfs.
 Check if you have the `riscv64-cartesi-linux-gnu-gcc` toolchain available in your path first,
 and docker installed with RISC-V QEMU support.
 Then run `make rootfs.ext2`.
 
 ## How all this works
 
-I runs DOOM normally, video and audio are written to virtual memory that is known to be fixed
-in a physical memory range. Every frame the machine performs a yield automatic to expose
-audio and video and gather keyboard inputs.
+It runs DOOM normally, video and audio are written to a virtual memory range that is known to be fixed
+in a physical memory range visible from outside. At every frame, the machine performs a yield automatic to expose
+audio and video to the host and gather keyboard inputs from the host.
 
 In the host the following libraries are used:
  - [Sokol](https://github.com/floooh/sokol) and [Sokol GP](https://github.com/edubart/sokol_gp) - for window, inputs and graphics
- - [Miniaudio] - https://github.com/mackron/miniaudio
- - [Cartesi Machine C API] - For running a virtual machine with DOOM
+ - [Miniaudio](https://github.com/mackron/miniaudio) - for audio
+ - [Cartesi Machine](https://github.com/cartesi/machine-emulator) - For running a RISC-V virtual machine with DOOM
 
 ## Structure
 
@@ -39,7 +39,7 @@ In the host the following libraries are used:
 - `fbdoom`: [fbDOOM sources](https://github.com/maximevince/fbDOOM) patched to use RIV for Audio/Video/Input.
 - `fbdoom-machine`: Source code of the Cartesi Machine with Audio/Video/Input support using RIV.
 - `images`: folder with pre compiled images
-    - `fbdoom_rootfs.ext2: the virtual machine root filesystem
+    - `fbdoom_rootfs.ext2`: the virtual machine root filesystem
     - `linux-hugetlbfs-5.15.63-ctsi-1.bin`: the virtual machine kernel, patched with HUGETLBFS support
     - `rom-v0.15.0.bin`: the virtual machine rom
 - `rivlib`: minimal library to communicate audio/video/input between the host and virtual machine
@@ -63,7 +63,7 @@ You shouldn't have difficulty understanding its code, the sources are readable.
 ### Why does this use a custom Linux kernel?
 Because the code depends on [HUGETLBFS](https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt) support.
 Huge pages are used to guarantee a contiguous fixed physical memory address that can be write/read from outside
-the machine bypasses the kernel's page cache.
+the machine, it also bypasses the kernel's page cache.
 It's used like a pseudo device, to map physical memory memory to user space virtual memory,
 it's a dirty trick to exchange bytes between the guest/host without overhead.
 
@@ -75,7 +75,7 @@ The low level Cartesi Machine C API is used to accomplish this.
 Yes, the RIV library could be extended to work accepting on-chain inputs.
 This same project could be used to record a log of keyboard inputs in the user host machine,
 then this same project could be used to replay keyboard inputs sent on-chain,
-and run DOOM without a display or audio just to capture frames or validate gameplays.
+and run DOOM without a display or audio, just to capture frames or validate gameplays.
 
 ### What platforms do this work?
 Currently this can only be played in host systems using Linux.
@@ -84,7 +84,7 @@ when the Cartesi Machine gets support for those platforms.
 
 ### Is this finished?
 No, there is no guarantee in the quality of the code, this was made as a quick dirty hack.
-I am opening the source of this without finishing or without an a real on-chain example,
+I am opening the source of this without polishing or without a real on-chain example,
 to inspire people and due to requests.
 This code is also a proof that the cartesi machine can indeed run DOOM in real-time.
 
