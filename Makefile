@@ -11,11 +11,14 @@ HOST_CFLAGS=-fwrapv -fno-strict-aliasing -pthread -Wno-incompatible-pointer-type
 HOST_LDFLAGS=-lm -lX11 -lXi -lXcursor -ldl -lGL -L$(CARTESI_MACHINE_LIB_DIR) -lcartesi
 HOST_NELUA_FLAGS=--cc=$(HOST_CC) $(NELUA_GEN_FLAGS)
 
-.PHONY: machine rootfs all test clean distclean
+.PHONY: machine rootfs download-rootfs all test clean distclean
 
 machine: build/fbdoom-machine
 
 rootfs: images/fbdoom_rootfs.ext2
+
+download-rootfs:
+	wget -O images/fbdoom_rootfs.ext2 https://github.com/edubart/cartesi-doom-example/releases/download/v0.0.1/fbdoom_rootfs.ext2
 
 all: build/fbdoom-machine images/fbdoom_rootfs.ext2
 

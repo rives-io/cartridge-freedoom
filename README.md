@@ -4,17 +4,15 @@ This is an example of running DOOM inside the Cartesi in real-time.
 
 You can see a video of this in action in [this tweet](https://twitter.com/edubart/status/1621512794339446786)
 
-![](https://twitter.com/i/status/1621512794339446786)
-
 ## How to test
 
 First make sure you have the following requirements:
  - Your host system is using Linux, this is the only supported platform at this moment.
  - You have [machine-emulator v0.13.0](https://github.com/cartesi/machine-emulator/releases/tag/v0.13.0) is installed, and its library should be available in `/opt/cartesi/lib/libcartesi.so`. Make sure you are using this exact version, there are hard coded constants to work with exactly this version of the emulator.
  - You have the GCC compiler installed.
- - Make sure to have `images/fbdoom_rootfs.ext2`, if you didn't download it, you can build it with `make rootfs`.
 
-Then simply run "make test" to compile everything and test.
+First download `images/fbdoom_rootfs.ext2` with `make download-rootfs`, or build it `make rootfs`.
+Then simply run `make test` to compile everything and test.
 The DOOM should pop-up in a few seconds for you to play.
 
 ## How to build rootfs
