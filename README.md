@@ -23,7 +23,7 @@ You need the following development packages to compile:
 apt-get install build-essential libx11-dev libxi-dev libxcursor-dev libgl1-mesa-dev
 ```
 
-You also need the Cartesi Machine v0.13.0, you can downloadit prebuilt for Ubuntu with the following commands:
+You also need the Cartesi Machine v0.13.0, you can download it prebuilt for Ubuntu with the following commands:
 
 ```
 mkdir -p /opt/cartesi
@@ -32,10 +32,9 @@ tar -C /opt/cartesi -xf machine-emulator-Linux-v0.13.0.tar.gz
 ```
 
 After the above steps are completed, you should be able to compile and run the demo in
-Ubuntu using the following commands:
+Ubuntu using the following command:
 
 ```
-export LD_LIBRARY_PATH=/opt/cartesi/lib:$LD_LIBRARY_PATH
 make test
 ```
 
@@ -62,7 +61,7 @@ Then run `make rootfs.ext2`.
 ## Editing source code
 
 First make sure you have Nelua installed, after editing the sources code,
-to regenerated the C code from Nelua sources type `make gen-c`,
+to regenerate the C code from Nelua sources type `make gen-c`,
 then you can use `make test` to test it.
 
 ## Structure
@@ -99,7 +98,7 @@ the machine, it also bypasses the kernel's page cache.
 It's used like a pseudo device, to map physical memory memory to user space virtual memory,
 it's a dirty trick to exchange bytes between the guest/host without overhead.
 
-### Why the code use the Cartesi Machine as a library?
+### Why does the code use the Cartesi Machine as a library?
 To inject keyboard input and spit-out video and audio output to the host machine.
 The low level Cartesi Machine C API is used to accomplish this.
 
@@ -121,7 +120,7 @@ to inspire people and due to requests.
 This code is also a proof that the cartesi machine can indeed run DOOM in real-time.
 
 ### Other question?
-Reach me in Cartesi discord or create an issue.
+Ping me in Cartesi Discord server or create an issue.
 
 ## License
 ?? - use at your own risk
