@@ -33,6 +33,12 @@ In the host the following libraries are used:
  - [Miniaudio](https://github.com/mackron/miniaudio) - for audio
  - [Cartesi Machine](https://github.com/cartesi/machine-emulator) - For running a RISC-V virtual machine with DOOM
 
+## Editing source code
+
+First make sure you have Nelua installed, after editing the sources code,
+to regenerated the C code from Nelua sources type `make gen-c`,
+then you can use `make test` to test it.
+
 ## Structure
 
 - `build`: Temporary folder used for building.

@@ -15,6 +15,8 @@ HOST_NELUA_FLAGS=--cc=$(HOST_CC) $(NELUA_GEN_FLAGS)
 
 machine: build/fbdoom-machine
 
+gen-c: fbdoom-machine/fbdoom-machine.c rivlib/riv.c
+
 rootfs: images/fbdoom_rootfs.ext2
 
 download-rootfs:
@@ -28,17 +30,17 @@ test: build/fbdoom-machine
 build:
 	mkdir -p build
 
+build/fbdoom-machine: | build
+	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ fbdoom-machine/fbdoom-machine.c
+
+build/libriv.so: | build
+	$(RISCV_CC) $(RISCV_CFLAGS) $(RISCV_LDFLAGS) -shared -fPIC -o $@ rivlib/riv.c
+
 fbdoom-machine/fbdoom-machine.c: fbdoom-machine/fbdoom-machine.nelua fbdoom-machine/deps/*.nelua fbdoom-machine/deps/*.h rivlib/riv.nelua | build
 	nelua $(HOST_NELUA_FLAGS) --ldflags="-L$(CARTESI_MACHINE_LIB_DIR)" -o $@ $<
 
-build/fbdoom-machine: fbdoom-machine/fbdoom-machine.c
-	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ $<
-
 rivlib/riv.c: rivlib/riv.nelua rivlib/*.nelua rivlib/deps/*.nelua | build
 	nelua $(RISCV_NELUA_FLAGS) -Pnoentrypoint -DRIV_IMPLEMENTATION=true -o $@ $<
-
-build/libriv.so: rivlib/riv.c
-	$(RISCV_CC) $(RISCV_CFLAGS) $(RISCV_LDFLAGS) -shared -fPIC -o $@ $<
 
 build/fbdoom_rootfs.tar: Dockerfile build/libriv.so build/fbdoom
 	docker buildx build --progress plain --output type=tar,dest=$@ .
