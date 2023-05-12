@@ -15,12 +15,31 @@ First download `images/fbdoom_rootfs.ext2` with `make download-rootfs`, or build
 Then simply run `make test` to compile everything and test.
 The DOOM should pop-up in a few seconds for you to play.
 
-## How to build rootfs
+## Ubuntu instructions
 
-In case you want to patch sources inside `fbdoom`, you will need to rebuild it and its rootfs.
-Check if you have the `riscv64-cartesi-linux-gnu-gcc` toolchain available in your path first,
-and docker installed with RISC-V QEMU support.
-Then run `make rootfs.ext2`.
+You need the following development packages to compile:
+
+```
+apt-get install build-essential libx11-dev libxi-dev libxcursor-dev libgl1-mesa-dev
+```
+
+You also need the Cartesi Machine v0.13.0, you can downloadit prebuilt for Ubuntu with the following commands:
+
+```
+mkdir -p /opt/cartesi
+wget https://github.com/cartesi/machine-emulator/releases/download/v0.13.0/machine-emulator-Linux-v0.13.0.tar.gz
+tar -C /opt/cartesi -xf machine-emulator-Linux-v0.13.0.tar.gz
+```
+
+After the above steps are completed, you should be able to compile and run the demo in
+Ubuntu using the following commands:
+
+```
+export LD_LIBRARY_PATH=/opt/cartesi/lib:$LD_LIBRARY_PATH
+make test
+```
+
+*This was tested in Ubuntu 22.04 LTS*
 
 ## How all this works
 
@@ -32,6 +51,13 @@ In the host the following libraries are used:
  - [Sokol](https://github.com/floooh/sokol) and [Sokol GP](https://github.com/edubart/sokol_gp) - for window, inputs and graphics
  - [Miniaudio](https://github.com/mackron/miniaudio) - for audio
  - [Cartesi Machine](https://github.com/cartesi/machine-emulator) - For running a RISC-V virtual machine with DOOM
+
+## How to build rootfs
+
+In case you want to patch sources inside `fbdoom`, you will need to rebuild it and its rootfs.
+Check if you have the `riscv64-cartesi-linux-gnu-gcc` toolchain available in your path first,
+and docker installed with RISC-V QEMU support.
+Then run `make rootfs.ext2`.
 
 ## Editing source code
 

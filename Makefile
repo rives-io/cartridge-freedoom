@@ -8,7 +8,7 @@ RISCV_NELUA_FLAGS=--cc=$(RISCV_CC) $(NELUA_GEN_FLAGS)
 
 HOST_CC=gcc
 HOST_CFLAGS=-fwrapv -fno-strict-aliasing -pthread -Wno-incompatible-pointer-types -I./fbdoom-machine/deps
-HOST_LDFLAGS=-L$(CARTESI_MACHINE_LIB_DIR) -lcartesi -lm -lX11 -lXi -lXcursor -ldl -lGL
+HOST_LDFLAGS=-L$(CARTESI_MACHINE_LIB_DIR) -lcartesi -lX11 -lXi -lXcursor -lGL -lm -ldl
 HOST_NELUA_FLAGS=--cc=$(HOST_CC) $(NELUA_GEN_FLAGS)
 
 .PHONY: machine rootfs download-rootfs all test clean distclean
