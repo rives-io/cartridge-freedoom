@@ -4,41 +4,64 @@ This is an example of running DOOM inside the Cartesi in real-time.
 
 You can see a video of this in action in [this tweet](https://twitter.com/edubart/status/1621512794339446786)
 
-## How to test
-
-First make sure you have the following requirements:
- - Your host system is using Linux, this is the only supported platform at this moment.
- - You have [machine-emulator v0.13.0](https://github.com/cartesi/machine-emulator/releases/tag/v0.13.0) installed, and its library should be available in `/opt/cartesi/lib/libcartesi.so`. Make sure you are using this exact version, there are hard coded constants to work with exactly this version of the emulator.
- - You have the GCC compiler installed.
-
-First download `images/fbdoom_rootfs.ext2` with `make download-rootfs`, or build it with `make rootfs`.
-Then simply run `make test` to compile everything and test.
-The DOOM should pop-up in a few seconds for you to play.
-
-## Ubuntu instructions
+## How to run in Ubuntu
 
 You need the following development packages to compile:
 
 ```
-apt-get install build-essential libx11-dev libxi-dev libxcursor-dev libgl1-mesa-dev
+apt-get install build-essential libx11-dev libxi-dev libxcursor-dev libgl1-mesa-dev git wget
 ```
 
 You also need the Cartesi Machine v0.13.0, you can download it prebuilt for Ubuntu with the following commands:
 
 ```
-mkdir -p /opt/cartesi
 wget https://github.com/cartesi/machine-emulator/releases/download/v0.13.0/machine-emulator-Linux-v0.13.0.tar.gz
+mkdir -p /opt/cartesi
 tar -C /opt/cartesi -xf machine-emulator-Linux-v0.13.0.tar.gz
 ```
 
-After the above steps are completed, you should be able to compile and run the demo in
-Ubuntu using the following command:
+After the above steps are completed, you should be able to clone, compile and run the demo in Ubuntu using the following commands:
 
 ```
+git clone https://github.com/edubart/cartesi-doom-example.git
+cd cartesi-doom-example
+make download-rootfs
 make test
 ```
 
+The DOOM game should pop-up in a few seconds for you to play.
+
 *This was tested in Ubuntu 22.04 LTS*
+
+## How to run in any Linux
+
+First make sure you have the following requirements:
+ - Your host system is using Linux, this is the only supported platform at this moment.
+ - You have [machine-emulator v0.13.0](https://github.com/cartesi/machine-emulator/releases/tag/v0.13.0) installed, and its library should be available in `/opt/cartesi/lib/libcartesi.so`. Make sure you are using this exact version, there are hard coded constants to work with exactly this version of the emulator.
+ - You have the `make`, `gcc`, git` and `wget` installed.
+
+Once you have all the above requirements, you should be able to clone, compile and run the demo using the following commands:
+
+```
+git clone https://github.com/edubart/cartesi-doom-example.git
+cd cartesi-doom-example
+make download-rootfs
+make test
+```
+
+The DOOM game should pop-up in a few seconds for you to play.
+
+## Game Controls
+
+- Ctrl              - Fire
+- Space             - Use / Open
+- Left/Right        - Turn
+- Up/Down           - Walk
+- Alt + Left/Right  - Walk laterally
+- Tab               - Game Map
+- Shift             - Run
+- Escape            - Menu
+- Enter             - Menu select
 
 ## How all this works
 
