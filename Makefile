@@ -8,7 +8,7 @@ RISCV_NELUA_FLAGS=--cc=$(RISCV_CC) $(NELUA_GEN_FLAGS)
 
 HOST_CC=gcc
 HOST_CFLAGS=-fwrapv -fno-strict-aliasing -pthread -Wno-incompatible-pointer-types -I./fbdoom-machine/deps
-HOST_LDFLAGS=-lm -lX11 -lXi -lXcursor -ldl -lGL -L$(CARTESI_MACHINE_LIB_DIR) -lcartesi
+HOST_LDFLAGS=-L$(CARTESI_MACHINE_LIB_DIR) -lcartesi -lm -lX11 -lXi -lXcursor -ldl -lGL
 HOST_NELUA_FLAGS=--cc=$(HOST_CC) $(NELUA_GEN_FLAGS)
 
 .PHONY: machine rootfs download-rootfs all test clean distclean
@@ -31,10 +31,10 @@ build:
 	mkdir -p build
 
 build/fbdoom-machine: | build
-	$(HOST_CC) $(HOST_CFLAGS) $(HOST_LDFLAGS) -o $@ fbdoom-machine/fbdoom-machine.c
+	$(HOST_CC) $(HOST_CFLAGS) -o $@ fbdoom-machine/fbdoom-machine.c $(HOST_LDFLAGS)
 
 build/libriv.so: | build
-	$(RISCV_CC) $(RISCV_CFLAGS) $(RISCV_LDFLAGS) -shared -fPIC -o $@ rivlib/riv.c
+	$(RISCV_CC) $(RISCV_CFLAGS) -shared -fPIC -o $@ rivlib/riv.c $(RISCV_LDFLAGS)
 
 fbdoom-machine/fbdoom-machine.c: fbdoom-machine/fbdoom-machine.nelua fbdoom-machine/deps/*.nelua fbdoom-machine/deps/*.h rivlib/riv.nelua | build
 	nelua $(HOST_NELUA_FLAGS) --ldflags="-L$(CARTESI_MACHINE_LIB_DIR)" -o $@ $<
