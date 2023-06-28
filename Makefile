@@ -1,13 +1,16 @@
-CARTESI_MACHINE_LIB_DIR=/opt/cartesi/lib
+CARTESI_MACHINE_PREFIX=/opt/cartesi
+CARTESI_MACHINE_LIB_DIR=$(CARTESI_MACHINE_PREFIX)/lib
+CARTESI_MACHINE_INC_DIR=$(CARTESI_MACHINE_PREFIX)/include
 
 NELUA_GEN_FLAGS=-Pnogc -Pnochecks -Pnoassertloc -Pnocwarnpragmas -Pnocstaticassert --release --no-cache
-RISCV_CC=riscv64-cartesi-linux-gnu-gcc
-RISCV_CFLAGS=-O2 -fwrapv -fno-strict-aliasing -flto=auto -DNDEBUG -Wno-incompatible-pointer-types
+RISCV_CC=riscv64-linux-gnu-gcc
+RISCV_CFLAGS=-O2 -fno-strict-overflow -fno-strict-aliasing -flto=auto -DNDEBUG -Wno-incompatible-pointer-types
 RISCV_LDFLAGS=-s -Wl,-O1,--sort-common,--build-id=none -z relro -z now
 RISCV_NELUA_FLAGS=--cc=$(RISCV_CC) $(NELUA_GEN_FLAGS)
 
 HOST_CC=gcc
-HOST_CFLAGS=-fwrapv -fno-strict-aliasing -pthread -Wno-incompatible-pointer-types -I./fbdoom-machine/deps
+HOST_CFLAGS=-O2 -fno-strict-overflow -fno-strict-aliasing -pthread -DNDEBUG -Wno-incompatible-pointer-types
+HOST_INCS=-I./fbdoom-machine/deps -I"$(CARTESI_MACHINE_INC_DIR)"
 HOST_LIBS=-lcartesi -lX11 -lXi -lXcursor -lGL -lm -ldl
 HOST_LDFLAGS=-L"$(CARTESI_MACHINE_LIB_DIR)" -Wl,-rpath,"$(CARTESI_MACHINE_LIB_DIR)" $(HOST_LIBS)
 HOST_NELUA_FLAGS=--cc=$(HOST_CC) $(NELUA_GEN_FLAGS)
@@ -32,7 +35,7 @@ build:
 	mkdir -p build
 
 build/fbdoom-machine: | build
-	$(HOST_CC) $(HOST_CFLAGS) -o $@ fbdoom-machine/fbdoom-machine.c $(HOST_LDFLAGS)
+	$(HOST_CC) $(HOST_CFLAGS) $(HOST_INCS) -o $@ fbdoom-machine/fbdoom-machine.c $(HOST_LDFLAGS)
 
 build/libriv.so: | build
 	$(RISCV_CC) $(RISCV_CFLAGS) -shared -fPIC -o $@ rivlib/riv.c $(RISCV_LDFLAGS)
@@ -49,8 +52,16 @@ build/fbdoom_rootfs.tar: Dockerfile build/libriv.so build/fbdoom
 build/fbdoom: build/libriv.so fbdoom/*.c fbdoom/*.h
 	$(MAKE) -C fbdoom
 
-images/fbdoom_rootfs.ext2: build/fbdoom_rootfs.tar scripts/pack-ext2.sh
-	scripts/pack-ext2.sh $< $@
+images/fbdoom_rootfs.ext2: build/fbdoom_rootfs.tar
+	genext2fs \
+	    --faketime \
+	    --allow-holes \
+	    --squash-uids 0 \
+	    --bytes-per-inode 4096 \
+	    --block-size 4096 \
+	    --readjustment +5% \
+	    --volume-label rootfs \
+	    --tarball $< $@
 
 clean:
 	rm -rf build

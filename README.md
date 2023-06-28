@@ -77,8 +77,12 @@ In the host the following libraries are used:
 ## How to build rootfs
 
 In case you want to patch sources inside `fbdoom`, you will need to rebuild it and its rootfs.
-Check if you have the `riscv64-cartesi-linux-gnu-gcc` toolchain available in your path first,
-and docker installed with RISC-V QEMU support.
+
+Check if you have the following requirements:
+- `riscv64-linux-gnu-gcc` toolchain available in your path
+- [https://github.com/cartesi/genext2fs](genext2fs) installed and available in your path, must be this custom version
+- Docker installed with RISC-V QEMU support.
+
 Then run `make rootfs.ext2`.
 
 ## Editing source code
