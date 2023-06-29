@@ -1,4 +1,4 @@
-## DEBUG = true
+## DEBUG = false
 
 require 'string'
 require 'io'
@@ -17,7 +17,20 @@ require 'rivlib.riv'
 
 local MACHINE_MEM_BASE_PADDR <comptime> = 0x80000000
 local MACHINE_HUGE_PAGE_PADDR <comptime> = 0x81600000
+local MACHINE_OUTPUT_PADDR <comptime> = 0x90000000000000
+local MACHINE_OUTPUT_SIZE <comptime> = 0x200000
 local MACHINE_MEM_SIZE <comptime> = 128*1024*1024
+
+local bootargs: string = "console=hvc0 \z
+  rootfstype=ext2 \z
+  root=/dev/mtdblock0 \z
+  rw quiet \z
+  swiotlb=noforce \z
+  mtdparts=flash.0:-(root) \z
+  hugepagesz=2M hugepages=1 -- \z
+  /root/fbdoom -iwad /root/doom1.wad -nomusic "..string.concat(arg, " ")
+
+print(bootargs)
 
 local machine: CartesiMachine = CartesiMachine.create{
   ram = {
@@ -26,22 +39,20 @@ local machine: CartesiMachine = CartesiMachine.create{
   },
   rom = {
     image_filename = './images/rom-v0.15.0.bin',
-    bootargs = "console=hvc0 \z
-      rootfstype=ext2 \z
-      root=/dev/mtdblock0 \z
-      rw quiet \z
-      swiotlb=noforce \z
-      mtdparts=flash.0:-(root) \z
-      hugepagesz=2M hugepages=1 -- /root/fbdoom -iwad /root/doom1.wad"
+    bootargs = bootargs
   },
   htif = {
     yield_automatic = true,
   },
-  flash_drive = {count = 1, entry = {
+  flash_drive = {count = 2, entry = {
     {
       start = 0x80000000000000,
       length = fs.stat("./images/fbdoom_rootfs.ext2").size,
       image_filename = "./images/fbdoom_rootfs.ext2",
+    },
+    {
+      start = MACHINE_OUTPUT_PADDR,
+      length = MACHINE_OUTPUT_SIZE,
     }
   }}
 }
@@ -56,6 +67,7 @@ local desc: riv_desc
 local frame_count: uint64 = 0
 local next_frame_time: number = 0
 local last_frame_time: number = 0
+local machine_output: [MACHINE_OUTPUT_SIZE]byte
 
 local function refresh_riv_desc()
   machine:read_memory(MACHINE_HUGE_PAGE_PADDR, (@span(byte)){data=(@*[0]byte)(&desc),size=#@riv_desc})
@@ -135,10 +147,18 @@ local function machine_poll()
     local break_reason: CM_BREAK_REASON = machine:run()
     if break_reason == CM_BREAK_REASON_HALTED then
       io.printf('Machine HALTED\n')
+      machine:read_memory(MACHINE_OUTPUT_PADDR, (@span(byte)){data=&machine_output,size=MACHINE_OUTPUT_SIZE})
+      local output: string = (@string)((@cstring)(&machine_output[0]))
       sapp_quit()
+      print('Machine OUTPUT saved to file machine_output.txt')
+      local output_file: filestream = assert(io.open('machine_output.txt', 'w'))
+      assert(output_file:write(output))
+      output_file:close()
+      print('==== MACHINE OUTPUT ====')
+      print(output)
       return
     elseif break_reason ~= CM_BREAK_REASON_YIELDED_AUTOMATICALLY then
-      print 'unexpected break reason'
+      io.printf('unexpected break reason\n')
       sapp_quit()
       return
     end
@@ -266,6 +286,6 @@ local app_desc: sapp_desc = {
   event_cb = event,
   width = 320,
   height = 240,
-  window_title = "Cartesi FBDoom",
+  window_title = "DOOM",
 }
 sapp_run(&app_desc)

@@ -63,6 +63,77 @@ The DOOM game should pop-up in a few seconds for you to play.
 - Escape            - Menu
 - Enter             - Menu select
 
+For full controls list check the `READ THIS!` menu while in-game.
+
+## Dumping game statistics
+
+You can play and dump game statistics to a file using the following command:
+
+`./build/fbdoom-machine -statdump /dev/mtdblock1 -skill <difficulty> -warp <episode> <level>`
+
+Episode can only be 1.
+
+Skill is a number from 0-5:
+
+0 - No monsters
+1 - "I'm Too Young To Die"
+2 - "Hey, Not Too Rough"
+3 - "Hurt Me Plenty"
+4 - "Ultra-Violence"
+5 - "Nightmare!"
+
+Level is a number from 1-9:
+
+1 - E1M1: Hangar
+2 - E1M2: Nuclear Plant
+3 - E1M3: Toxin Refinery
+4 - E1M4: Command Control
+5 - E1M5: Phobos Lab
+6 - E1M6: Central Processing
+7 - E1M7: Computer Station
+8 - E1M8: Phobos Anomaly
+9 - E1M9: Military Base
+
+
+For example:
+```
+./build/fbdoom-machine -statdump /dev/mtdblock1 -skill 3 -warp 1 2
+```
+
+This will start a new game with difficulty 3 at level 2, when the user quits the game
+statistics for each level will be saved to machine `/dev/mtdblock1`, and the contents
+will be saved to a file in the host named `machine_output.txt`.
+The statistics has the following format:
+
+```
+===========================================
+E1M1
+===========================================
+
+Time: 0:21 (par: 0:30)
+
+Player 1 (Green):
+    Kills: 0 / 4 (0%)
+    Items: 3 / 37 (8%)
+    Secrets: 0 / 3 (0%)
+
+===========================================
+E1M2
+===========================================
+
+Time: 1:53 (par: 1:15)
+
+Player 1 (Green):
+    Kills: 10 / 20 (50%)
+    Items: 5 / 42 (11%)
+    Secrets: 0 / 6 (0%)
+
+
+```
+
+This file can have multiple entries for the same level,
+and can capture up to 32 entries.
+
 ## How all this works
 
 It runs DOOM normally, video and audio are written to a virtual memory range that is known to be fixed

@@ -19,7 +19,8 @@ HOST_NELUA_FLAGS=--cc=$(HOST_CC) $(NELUA_GEN_FLAGS)
 
 machine: build/fbdoom-machine
 
-gen-c: fbdoom-machine/fbdoom-machine.c rivlib/riv.c
+gen-c:
+	@$(MAKE) --no-print-directory HAS_NELUA=yes fbdoom-machine/fbdoom-machine.c rivlib/riv.c
 
 rootfs: images/fbdoom_rootfs.ext2
 
@@ -34,17 +35,24 @@ test: build/fbdoom-machine
 build:
 	mkdir -p build
 
-build/fbdoom-machine: | build
+build/fbdoom-machine: fbdoom-machine/fbdoom-machine.c | build
 	$(HOST_CC) $(HOST_CFLAGS) $(HOST_INCS) -o $@ fbdoom-machine/fbdoom-machine.c $(HOST_LDFLAGS)
 
-build/libriv.so: | build
+build/libriv.so: rivlib/riv.c | build
 	$(RISCV_CC) $(RISCV_CFLAGS) -shared -fPIC -o $@ rivlib/riv.c $(RISCV_LDFLAGS)
 
+ifeq ($(HAS_NELUA),yes)
 fbdoom-machine/fbdoom-machine.c: fbdoom-machine/fbdoom-machine.nelua fbdoom-machine/deps/*.nelua fbdoom-machine/deps/*.h rivlib/riv.nelua | build
 	nelua $(HOST_NELUA_FLAGS) --ldflags="-L$(CARTESI_MACHINE_LIB_DIR)" -o $@ $<
 
 rivlib/riv.c: rivlib/riv.nelua rivlib/*.nelua rivlib/deps/*.nelua | build
 	nelua $(RISCV_NELUA_FLAGS) -Pnoentrypoint -DRIV_IMPLEMENTATION=true -o $@ $<
+else
+fbdoom-machine/fbdoom-machine.c: fbdoom-machine/fbdoom-machine.nelua fbdoom-machine/deps/*.nelua fbdoom-machine/deps/*.h rivlib/riv.nelua | build
+	@echo Using pre-generated $@, pass HAS_NELUA=yes if you changed $< and need to regenerate it.
+rivlib/riv.c: rivlib/riv.nelua rivlib/*.nelua rivlib/deps/*.nelua | build
+	@echo Using pre-generated $@, pass HAS_NELUA=yes if you changed $< and need to regenerate it.
+endif
 
 build/fbdoom_rootfs.tar: Dockerfile build/libriv.so build/fbdoom
 	docker buildx build --progress plain --output type=tar,dest=$@ .
