@@ -75,24 +75,24 @@ Episode can only be 1.
 
 Skill is a number from 0-5:
 
-0 - No monsters
-1 - "I'm Too Young To Die"
-2 - "Hey, Not Too Rough"
-3 - "Hurt Me Plenty"
-4 - "Ultra-Violence"
-5 - "Nightmare!"
+0. No monsters
+1. "I'm Too Young To Die"
+2. "Hey, Not Too Rough"
+3. "Hurt Me Plenty"
+4. "Ultra-Violence"
+5. "Nightmare!"
 
 Level is a number from 1-9:
 
-1 - E1M1: Hangar
-2 - E1M2: Nuclear Plant
-3 - E1M3: Toxin Refinery
-4 - E1M4: Command Control
-5 - E1M5: Phobos Lab
-6 - E1M6: Central Processing
-7 - E1M7: Computer Station
-8 - E1M8: Phobos Anomaly
-9 - E1M9: Military Base
+1. E1M1: Hangar
+2. E1M2: Nuclear Plant
+3. E1M3: Toxin Refinery
+4. E1M4: Command Control
+5. E1M5: Phobos Lab
+6. E1M6: Central Processing
+7. E1M7: Computer Station
+8. E1M8: Phobos Anomaly
+9. E1M9: Military Base
 
 
 For example:

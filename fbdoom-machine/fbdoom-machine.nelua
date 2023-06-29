@@ -3,7 +3,6 @@
 require 'string'
 require 'io'
 require 'os'
-require 'fs'
 require 'math'
 require 'arg'
 require 'memory'
@@ -12,6 +11,7 @@ require '.deps.sokol_gfx'
 require '.deps.sokol_glue'
 require '.deps.sokol_gp'
 require '.deps.miniaudio'
+require '.deps.fs'
 require '.cartesi-utils'
 require 'rivlib.riv'
 
@@ -30,7 +30,10 @@ local bootargs: string = "console=hvc0 \z
   hugepagesz=2M hugepages=1 -- \z
   /root/fbdoom -iwad /root/doom1.wad -nomusic "..string.concat(arg, " ")
 
-print(bootargs)
+local rootfs_length = fs.stat("./images/fbdoom_rootfs.ext2").size
+if rootfs_length == 0 then
+  error 'fbdoom_rootfs.ext2 not found'
+end
 
 local machine: CartesiMachine = CartesiMachine.create{
   ram = {
