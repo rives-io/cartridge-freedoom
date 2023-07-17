@@ -159,6 +159,11 @@ Where:
 * `guest_cpu_clock`: is the RISC-V guest machine CPU clock, this value is the amount of million instructions per second the machine is capable of outputting, it varies because it depends very much on the instructions being executed.
 * `host_cpu_usage`: it's how much of the host CPU core was used to process everything, when this value is near 100 you should expect FPS to drop, a value of 50% means that the host CPU would be capable of doubling the FPS if it was unlimited.
 
+## Auto quit option
+
+In case you want the DOOM game to automatically exit when a level is finished,
+you can use the `-autoquit` option.
+
 ## How all this works
 
 It runs DOOM normally, video and audio are written to a virtual memory range that is known to be fixed

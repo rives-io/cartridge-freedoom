@@ -1517,7 +1517,10 @@ void G_WorldDone (void)
 } 
  
 void G_DoWorldDone (void) 
-{        
+{
+    if (M_CheckParm("-autoquit") > 0) {
+        I_Quit();
+    }
     gamestate = GS_LEVEL; 
     gamemap = wminfo.next+1; 
     G_DoLoadLevel (); 
