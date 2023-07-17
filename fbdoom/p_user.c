@@ -172,6 +172,9 @@ void P_MovePlayer (player_t* player)
 //
 #define ANG5   	(ANG90/18)
 
+#include "m_argv.h"
+void M_QuitDOOM(int choice);
+
 void P_DeathThink (player_t* player)
 {
     angle_t		angle;
@@ -214,8 +217,13 @@ void P_DeathThink (player_t* player)
 	    player->mo->angle -= ANG5;
     }
     else if (player->damagecount)
-	player->damagecount--;
-	
+		player->damagecount--;
+
+	static boolean quitasked = false;
+	if (!quitasked && player->viewheight == 6*FRACUNIT && player->damagecount == 0 && M_CheckParm("-autoquit") > 0) {
+		quitasked = true;
+		M_QuitDOOM(0);
+	}
 
     if (player->cmd.buttons & BT_USE)
 	player->playerstate = PST_REBORN;

@@ -1130,8 +1130,8 @@ int     quitsounds2[8] =
 
 void M_QuitResponse(int key)
 {
-    if (key != key_menu_confirm)
-	return;
+    // if (key != key_menu_confirm)
+	// return;
     if (!netgame)
     {
 	if (gamemode == commercial)

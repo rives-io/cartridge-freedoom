@@ -161,7 +161,7 @@ Where:
 
 ## Auto quit option
 
-In case you want the DOOM game to automatically exit when a level is finished,
+In case you want the DOOM game to automatically exit when a level is finished or a player dies,
 you can use the `-autoquit` option.
 
 ## How all this works
