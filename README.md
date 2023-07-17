@@ -134,6 +134,31 @@ Player 1 (Green):
 This file can have multiple entries for the same level,
 and can capture up to 32 entries.
 
+## Showing FPS
+
+You can use pass the option `-debug-fps` when running, this will print frame rate statistics every
+1 second, for example:
+
+```
+./build/fbdoom-machine -debug-fps
+...
+frame=16 fps=16.65 guest_cpu_clock=97.42MHz host_cpu_usage=61.13%
+frame=51 fps=35.00 guest_cpu_clock=138.61MHz host_cpu_usage=8.69%
+frame=86 fps=35.00 guest_cpu_clock=138.99MHz host_cpu_usage=8.67%
+frame=122 fps=35.02 guest_cpu_clock=140.19MHz host_cpu_usage=8.60%
+frame=158 fps=35.00 guest_cpu_clock=139.31MHz host_cpu_usage=8.65%
+frame=192 fps=33.32 guest_cpu_clock=136.58MHz host_cpu_usage=61.96%
+frame=227 fps=34.76 guest_cpu_clock=134.67MHz host_cpu_usage=64.52%
+frame=263 fps=35.03 guest_cpu_clock=139.34MHz host_cpu_usage=26.92%
+frame=298 fps=34.96 guest_cpu_clock=138.37MHz host_cpu_usage=24.15%
+```
+
+Where:
+* `frame`: is the current frame number since the application started, this can also be understood as "frame" time elapsed in the game.
+* `fps`: is the current frame rate per second, DOOM is limited to 35 FPS by design, so you should expect values to be around that.
+* `guest_cpu_clock`: is the RISC-V guest machine CPU clock, this value is the amount of million instructions per second the machine is capable of outputting, it varies because it depends very much on the instructions being executed.
+* `host_cpu_usage`: it's how much of the host CPU core was used to process everything, when this value is near 100 you should expect FPS to drop, a value of 50% means that the host CPU would be capable of doubling the FPS if it was unlimited.
+
 ## How all this works
 
 It runs DOOM normally, video and audio are written to a virtual memory range that is known to be fixed

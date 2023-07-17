@@ -30,7 +30,7 @@ download-rootfs:
 all: build/fbdoom-machine images/fbdoom_rootfs.ext2
 
 test: build/fbdoom-machine
-	./build/fbdoom-machine
+	./build/fbdoom-machine -debug-fps
 
 build:
 	mkdir -p build
