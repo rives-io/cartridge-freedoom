@@ -31,9 +31,13 @@ local bootargs: string = "console=hvc0 \z
   /root/fbdoom -iwad /root/doom1.wad -nomusic "..string.concat(arg, " ")
 
 local debug_fps: boolean = false
+local statdump: boolean = false
 for i,arg in ipairs(arg) do
   if arg == "-debug-fps" then
     debug_fps = true
+  end
+  if arg == "-statdump" then
+    statdump = true
   end
 end
 
@@ -151,20 +155,25 @@ local function limit_fps()
   end
 end
 
+local halted: boolean
+
 local function machine_poll()
   while true do
     local break_reason: CM_BREAK_REASON = machine:run()
     if break_reason == CM_BREAK_REASON_HALTED then
-      io.printf('Machine HALTED\n')
+      halted = true
+      io.printf('Halted\n')
+      io.printf('Cycles: %d\n', machine:read_mcycle())
       machine:read_memory(MACHINE_OUTPUT_PADDR, (@span(byte)){data=&machine_output,size=MACHINE_OUTPUT_SIZE})
       local output: string = (@string)((@cstring)(&machine_output[0]))
       sapp_quit()
-      print('Machine OUTPUT saved to file machine_output.txt')
-      local output_file: filestream = assert(io.open('machine_output.txt', 'w'))
-      assert(output_file:write(output))
-      output_file:close()
-      print('==== MACHINE OUTPUT ====')
-      print(output)
+      if statdump then
+        local output_file: filestream = assert(io.open('machine_output.txt', 'w'))
+        assert(output_file:write(output))
+        output_file:close()
+        print('==== MACHINE OUTPUT ====')
+        print(output)
+      end
       return
     elseif break_reason ~= CM_BREAK_REASON_YIELDED_AUTOMATICALLY then
       io.printf('unexpected break reason\n')
@@ -203,7 +212,7 @@ local function machine_frame_poll()
   mcycle_elapsed_sum = mcycle_elapsed_sum + (mcycle_end - mcycle_start)
   local last_time_elapsed = time_end - last_time
   if last_time_elapsed >= 1.0 then
-    if debug_fps then
+    if debug_fps and not halted then
       local mips: float64 = mcycle_elapsed_sum / (time_elapsed_sum * 1000000.0)
       local cpu_usage: float64 = (time_elapsed_sum * 100.0) / last_time_elapsed
       io.printf('frame=%d fps=%.2f guest_cpu_clock=%.2fMHz host_cpu_usage=%.2f%%\n',
