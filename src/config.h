@@ -6,9 +6,6 @@
 /* Define to 1 if you have the <dev/speaker/speaker.h> header file. */
 #undef HAVE_DEV_SPEAKER_SPEAKER_H
 
-/* Define to 1 if you have the <inttypes.h> header file. */
-#define HAVE_INTTYPES_H 1
-
 /* Define to 1 if you have the `ioperm' function. */
 #undef HAVE_IOPERM
 
@@ -70,13 +67,13 @@
 #undef PACKAGE_BUGREPORT
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "FDoom"
+#define PACKAGE_NAME "Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "FDoom 0.1"
+#define PACKAGE_STRING "Doom 0.1"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "fdoom.tar"
+#define PACKAGE_TARNAME "doom"
 
 /* Define to the home page for this package. */
 #define PACKAGE_URL ""
@@ -85,7 +82,7 @@
 #define PACKAGE_VERSION 0.1
 
 /* Change this when you create your awesome forked version */
-#define PROGRAM_PREFIX "fdoom"
+#define PROGRAM_PREFIX "doom"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1

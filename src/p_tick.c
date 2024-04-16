@@ -22,6 +22,7 @@
 #include "p_local.h"
 
 #include "doomstat.h"
+#include "statdump.h"
 
 
 int	leveltime;
@@ -148,4 +149,12 @@ void P_Ticker (void)
 
     // for par times
     leveltime++;	
+
+    if (playeringame[0]) {
+        StatPartialDump(players[0].killcount,
+                        players[0].itemcount,
+                        players[0].secretcount,
+                        leveltime,
+                        players[0].playerstate == PST_DEAD);
+    }
 }

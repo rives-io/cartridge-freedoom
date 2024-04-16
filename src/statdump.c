@@ -29,27 +29,7 @@
 
 #include "statdump.h"
 
-/* Par times for E1M1-E1M9. */
-static const int doom1_par_times[] =
-{
-    30, 75, 120, 90, 165, 180, 180, 30, 165,
-};
-
-/* Par times for MAP01-MAP09. */
-static const int doom2_par_times[] =
-{
-    30, 90, 120, 120, 90, 150, 120, 120, 270,
-};
-
-#if ORIGCODE
-
-/* Player colors. */
-static const char *player_colors[] =
-{
-    "Green", "Indigo", "Brown", "Red"
-};
-
-#endif
+#include <riv.h>
 
 // Array of end-of-level statistics that have been captured.
 
@@ -57,336 +37,134 @@ static const char *player_colors[] =
 static wbstartstruct_t captured_stats[MAX_CAPTURES];
 static int num_captured_stats = 0;
 
-#if ORIGCODE
-static GameMission_t discovered_gamemission = none;
-#endif
-
-#if ORIGCODE
-
-/* Try to work out whether this is a Doom 1 or Doom 2 game, by looking
- * at the episode and map, and the par times.  This is used to decide
- * how to format the level name.  Unfortunately, in some cases it is
- * impossible to determine whether this is Doom 1 or Doom 2. */
-
-static void DiscoverGamemode(wbstartstruct_t *stats, int num_stats)
-{
-    int partime;
-    int level;
-    int i;
-
-    if (discovered_gamemission != none)
-    {
-        return;
-    }
-
-    for (i=0; i<num_stats; ++i)
-    {
-        level = stats[i].last;
-
-        /* If episode 2, 3 or 4, this is Doom 1. */
-
-        if (stats[i].epsd > 0)
-        {
-            discovered_gamemission = doom;
-            return;
-        }
-
-        /* This is episode 1.  If this is level 10 or higher,
-           it must be Doom 2. */
-
-        if (level >= 9)
-        {
-            discovered_gamemission = doom2;
-            return;
-        }
-
-        /* Try to work out if this is Doom 1 or Doom 2 by looking
-           at the par time. */
-
-        partime = stats[i].partime;
-
-        if (partime == doom1_par_times[level] * TICRATE
-         && partime != doom2_par_times[level] * TICRATE)
-        {
-            discovered_gamemission = doom;
-            return;
-        }
-
-        if (partime != doom1_par_times[level] * TICRATE
-         && partime == doom2_par_times[level] * TICRATE)
-        {
-            discovered_gamemission = doom2;
-            return;
-        }
-    }
-}
-
-#endif
-
-#if ORIGCODE
-
-/* Returns the number of players active in the given stats buffer. */
-
-static int GetNumPlayers(wbstartstruct_t *stats)
-{
-    int i;
-    int num_players = 0;
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (stats->plyr[i].in)
-        {
-            ++num_players;
-        }
-    }
-
-    return num_players;
-}
-
-#endif
-
-#if ORIGCODE
-
-static void PrintBanner(FILE *stream)
-{
-    fprintf(stream, "===========================================\n");
-}
-
-static void PrintPercentage(FILE *stream, int amount, int total)
-{
-    if (total == 0)
-    {
-        fprintf(stream, "0");
-    }
-    else
-    {
-        fprintf(stream, "%i / %i", amount, total);
-
-        // statdump.exe is a 16-bit program, so very occasionally an
-        // integer overflow can occur when doing this calculation with
-        // a large value. Therefore, cast to short to give the same
-        // output.
-
-        fprintf(stream, " (%i%%)", (short) (amount * 100) / total);
-    }
-}
-
-#endif
-
-#if ORIGCODE
+typedef struct sum_stats {
+    int numkills;
+    int maxkills;
+    int numitems;
+    int maxitems;
+    int numsecrets;
+    int maxsecrets;
+    int numlevels;
+    int frames;
+} sum_stats_t;
 
 /* Display statistics for a single player. */
 
-static void PrintPlayerStats(FILE *stream, wbstartstruct_t *stats,
-        int player_num)
+static void PrintPlayerStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *stats, int player_num)
 {
-    wbplayerstruct_t *player = &stats->plyr[player_num];
-
-    fprintf(stream, "Player %i (%s):\n", player_num + 1,
-            player_colors[player_num]);
+    wbplayerstruct_t *player = &stats->plyr[0];
 
     /* Kills percentage */
-
-    fprintf(stream, "\tKills: ");
-    PrintPercentage(stream, player->skills, stats->maxkills);
-    fprintf(stream, "\n");
+    double kills = stats->maxkills > 0 ? (player->skills * 100.0) / stats->maxkills : 100.0;
+    fprintf(stream, "\t\t\"pctkills\": %.2f,\n"
+                    "\t\t\"numkills\": %d,\n",
+                    kills, player->skills);
+    sum->numkills += player->skills;
+    sum->maxkills += stats->maxkills;
 
     /* Items percentage */
-
-    fprintf(stream, "\tItems: ");
-    PrintPercentage(stream, player->sitems, stats->maxitems);
-    fprintf(stream, "\n");
+    double items = stats->maxitems > 0 ? (player->sitems * 100.0) / stats->maxitems : 100.0;
+    fprintf(stream, "\t\t\"pctitems\": %.2f,\n"
+                    "\t\t\"numitems\": %d,\n",
+                    items, player->sitems);
+    sum->numitems += player->sitems;
+    sum->maxitems += stats->maxitems;
 
     /* Secrets percentage */
+    double secret = stats->maxsecret > 0 ? (player->ssecret * 100.0) / stats->maxsecret : 100.0;
+    fprintf(stream, "\t\t\"pctsecrets\": %.2f,\n"
+                    "\t\t\"numsecrets\": %d,\n",
+                    secret, player->ssecret);
+    sum->numsecrets += player->ssecret;
+    sum->maxsecrets += stats->maxsecret;
 
-    fprintf(stream, "\tSecrets: ");
-    PrintPercentage(stream, player->ssecret, stats->maxsecret);
-    fprintf(stream, "\n");
 }
-
-#endif
-
-#if ORIGCODE
-
-/* Frags table for multiplayer games. */
-
-static void PrintFragsTable(FILE *stream, wbstartstruct_t *stats)
-{
-    int x, y;
-
-    fprintf(stream, "Frags:\n");
-
-    /* Print header */
-
-    fprintf(stream, "\t\t");
-
-    for (x=0; x<MAXPLAYERS; ++x)
-    {
-
-        if (!stats->plyr[x].in)
-        {
-            continue;
-        }
-
-        fprintf(stream, "%s\t", player_colors[x]);
-    }
-
-    fprintf(stream, "\n");
-
-    fprintf(stream, "\t\t-------------------------------- VICTIMS\n");
-
-    /* Print table */
-
-    for (y=0; y<MAXPLAYERS; ++y)
-    {
-        if (!stats->plyr[y].in)
-        {
-            continue;
-        }
-
-        fprintf(stream, "\t%s\t|", player_colors[y]);
-
-        for (x=0; x<MAXPLAYERS; ++x)
-        {
-            if (!stats->plyr[x].in)
-            {
-                continue;
-            }
-
-            fprintf(stream, "%i\t", stats->plyr[y].frags[x]);
-        }
-
-        fprintf(stream, "\n");
-    }
-
-    fprintf(stream, "\t\t|\n");
-    fprintf(stream, "\t     KILLERS\n");
-}
-
-#endif
-
-#if ORIGCODE
-
-/* Displays the level name: MAPxy or ExMy, depending on game mode. */
-
-static void PrintLevelName(FILE *stream, int episode, int level)
-{
-    PrintBanner(stream);
-
-    switch (discovered_gamemission)
-    {
-
-        case doom:
-            fprintf(stream, "E%iM%i\n", episode + 1, level + 1);
-            break;
-        case doom2:
-            fprintf(stream, "MAP%02i\n", level + 1);
-            break;
-        default:
-        case none:
-            fprintf(stream, "E%iM%i / MAP%02i\n", 
-                    episode + 1, level + 1, level + 1);
-            break;
-    }
-
-    PrintBanner(stream);
-}
-
-#endif
-
-#if ORIGCODE
 
 /* Print details of a statistics buffer to the given file. */
-
-static void PrintStats(FILE *stream, wbstartstruct_t *stats)
+static void PrintStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *stats)
 {
-    int leveltime, partime;
-    int i;
+    fprintf(stream, "{\n");
+    int episode = stats->epsd;
+    int level = stats->last;
+    fprintf(stream, "\t\t\"name\": \"E%iM%i\",\n", episode + 1, level + 1);
 
-    PrintLevelName(stream, stats->epsd, stats->last);
-    fprintf(stream, "\n");
+    int leveltime = stats->plyr[0].stime;
 
-    leveltime = stats->plyr[0].stime / TICRATE;
-    partime = stats->partime / TICRATE;
-    fprintf(stream, "Time: %i:%02i", leveltime / 60, leveltime % 60);
-    fprintf(stream, " (par: %i:%02i)\n", partime / 60, partime % 60);
-    fprintf(stream, "\n");
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (stats->plyr[i].in)
-        {
-            PrintPlayerStats(stream, stats, i);
-        }
+    if (stats->plyr[0].in) {
+        PrintPlayerStats(stream, sum, stats, 0);
     }
+    fprintf(stream, "\t\t\"frames\": %d\n", leveltime);
+    sum->frames += leveltime;
+    sum->numlevels += 1;
 
-    if (GetNumPlayers(stats) >= 2)
-    {
-        PrintFragsTable(stream, stats);
-    }
-
-    fprintf(stream, "\n");
+    fprintf(stream, "\t}");
 }
-
-#endif
 
 void StatCopy(wbstartstruct_t *stats)
 {
-    if (M_ParmExists("-statdump") && num_captured_stats < MAX_CAPTURES)
-    {
-        memcpy(&captured_stats[num_captured_stats], stats,
-               sizeof(wbstartstruct_t));
-        ++num_captured_stats;
+    if (num_captured_stats < MAX_CAPTURES) {
+        /* Replace stats for existing level */
+        int to_save_index = -1;
+        for (int i = 0; i < num_captured_stats; ++i) {
+            if (captured_stats[i].epsd == stats->epsd && captured_stats[i].last == stats->last) {
+                to_save_index = i;
+                break;
+            }
+        }
+        if (to_save_index == -1) {
+            to_save_index = num_captured_stats;
+            ++num_captured_stats;
+        }
+        /* Copy stats */
+        memcpy(&captured_stats[to_save_index], stats, sizeof(wbstartstruct_t));
     }
+    /* Dump stats */
+    StatDump();
+}
+
+void StatPartialDump(int kills, int items, int secrets, int frames, bool died)
+{
+    FILE *stream = fmemopen(riv->outcard, RIV_SIZE_OUTCARD, "wb");
+    if (!stream) {
+        return;
+    }
+    sum_stats_t sum = {0};
+    sum.numkills = kills;
+    sum.numitems = items;
+    sum.numsecrets = secrets;
+    sum.frames = frames;
+    fprintf(stream, "JSON{\n");
+    fprintf(stream, "\t\"level_stats\": [");
+    for (int i = 0; i < num_captured_stats; ++i) {
+        if (i != 0) {
+            fprintf(stream, ", ");
+        }
+        PrintStats(stream, &sum, &captured_stats[i]);
+    }
+    fprintf(stream, "],\n");
+    int score = sum.numitems*5 +
+                sum.numkills*15 +
+                sum.numsecrets*60 +
+                sum.numlevels*120 - sum.frames / TICRATE;
+    fprintf(stream, "\t\"score\": %d,\n", score);
+    fprintf(stream, "\t\"levels\": %d,\n", sum.numlevels);
+    fprintf(stream, "\t\"kills\": %d,\n", sum.numkills);
+    fprintf(stream, "\t\"items\": %d,\n", sum.numitems);
+    fprintf(stream, "\t\"secrets\": %d,\n", sum.numsecrets);
+    fprintf(stream, "\t\"frames\": %d,\n", sum.frames);
+    if (died) {
+        fprintf(stream, "\t\"died\": true\n");
+    } else {
+        fprintf(stream, "\t\"died\": false\n");
+    }
+    fprintf(stream, "}");
+    fflush(stream);
+
+    riv->outcard_len = ftell(stream);
+    fclose(stream);
 }
 
 void StatDump(void)
 {
-#if ORIGCODE
-    FILE *dumpfile;
-    int i;
-
-    //!
-    // @category compat
-    // @arg <filename>
-    //
-    // Dump statistics information to the specified file on the levels
-    // that were played. The output from this option matches the output
-    // from statdump.exe (see ctrlapi.zip in the /idgames archive).
-    //
-
-    i = M_CheckParmWithArgs("-statdump", 1);
-
-    if (i > 0)
-    {
-        printf("Statistics captured for %i level(s)\n", num_captured_stats);
-
-        // We actually know what the real gamemission is, but this has
-        // to match the output from statdump.exe.
-
-        DiscoverGamemode(captured_stats, num_captured_stats);
-
-        // Allow "-" as output file, for stdout.
-
-        if (strcmp(myargv[i + 1], "-") != 0)
-        {
-            dumpfile = fopen(myargv[i + 1], "w");
-        }
-        else
-        {
-            dumpfile = NULL;
-        }
-
-        for (i = 0; i < num_captured_stats; ++i)
-        {
-            PrintStats(dumpfile, &captured_stats[i]);
-        }
-
-        if (dumpfile != NULL)
-        {
-            fclose(dumpfile);
-        }
-    }
-#endif
+    StatPartialDump(0, 0, 0, 0, false);
 }
-

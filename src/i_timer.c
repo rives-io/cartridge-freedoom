@@ -16,6 +16,7 @@
 //      Timer functions.
 //
 
+#include "riv.h"
 #include "i_timer.h"
 #include "doomtype.h"
 
@@ -32,11 +33,7 @@ static uint32_t basetime = 0;
 
 int I_GetTicks(void)
 {
-    struct timeval  tp;
-    struct timezone tzp;
-  
-    gettimeofday(&tp, &tzp);
-    return (tp.tv_sec * 1000) + (tp.tv_usec / 1000); /* return milliseconds */
+    return riv->time_ms;
 }
 
 int  I_GetTime (void)
@@ -75,7 +72,7 @@ int I_GetTimeMS(void)
 void I_Sleep(int ms)
 {
     //SDL_Delay(ms);
-    usleep (ms * 1000);    
+    //usleep (ms * 1000);
 }
 
 void I_WaitVBL(int count)

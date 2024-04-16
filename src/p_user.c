@@ -28,7 +28,8 @@
 
 #include "doomstat.h"
 
-
+#include "m_argv.h"
+void M_QuitDOOM(int choice);
 
 // Index of the special effects (INVUL inverse) map.
 #define INVERSECOLORMAP		32
@@ -214,8 +215,13 @@ void P_DeathThink (player_t* player)
 	    player->mo->angle -= ANG5;
     }
     else if (player->damagecount)
-	player->damagecount--;
+		player->damagecount--;
 	
+	static boolean quitasked = false;
+	if (!quitasked && player->viewheight == 6*FRACUNIT && player->damagecount == 0 && M_CheckParm("-deathquit") > 0) {
+		quitasked = true;
+		M_QuitDOOM(0);
+	}
 
     if (player->cmd.buttons & BT_USE)
 	player->playerstate = PST_REBORN;

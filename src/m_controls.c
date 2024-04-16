@@ -32,8 +32,8 @@ int key_up = KEY_UPARROW;
 int key_down = KEY_DOWNARROW; 
 int key_strafeleft = KEY_STRAFE_L;
 int key_straferight = KEY_STRAFE_R;
-int key_fire = KEY_FIRE;
-int key_use = KEY_USE;
+int key_fire = KEY_RCTRL;
+int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
 
@@ -127,8 +127,8 @@ int key_weapon5 = '5';
 int key_weapon6 = '6';
 int key_weapon7 = '7';
 int key_weapon8 = '8';
-int key_prevweapon = 0;
-int key_nextweapon = 0;
+int key_prevweapon = KEY_PREVWEAPON;
+int key_nextweapon = KEY_NEXTWEAPON;
 
 // Map control keys:
 

@@ -1,65 +1,130 @@
-################################################################
-#
-# $Id:$
-#
-# $Log:$
-#
+# C sources code for DOOM
+OBJS=\
+	src/am_map.o \
+	src/d_event.o \
+	src/d_items.o \
+	src/d_iwad.o \
+	src/d_loop.o \
+	src/d_main.o \
+	src/d_mode.o \
+	src/d_net.o \
+	src/doomdef.o \
+	src/doomstat.o \
+	src/dstrings.o \
+	src/dummy.o \
+	src/f_finale.o \
+	src/f_wipe.o \
+	src/g_game.o \
+	src/hu_lib.o \
+	src/hu_stuff.o \
+	src/i_cdmus.o \
+	src/i_endoom.o \
+	src/i_joystick.o \
+	src/i_main.o \
+	src/i_scale.o \
+	src/i_system.o \
+	src/i_timer.o \
+	src/info.o \
+	src/m_argv.o \
+	src/m_bbox.o \
+	src/m_cheat.o \
+	src/m_config.o \
+	src/m_controls.o \
+	src/m_fixed.o \
+	src/m_menu.o \
+	src/m_misc.o \
+	src/m_random.o \
+	src/memio.o \
+	src/p_ceilng.o \
+	src/p_doors.o \
+	src/p_enemy.o \
+	src/p_floor.o \
+	src/p_inter.o \
+	src/p_lights.o \
+	src/p_map.o \
+	src/p_maputl.o \
+	src/p_mobj.o \
+	src/p_plats.o \
+	src/p_pspr.o \
+	src/p_saveg.o \
+	src/p_setup.o \
+	src/p_sight.o \
+	src/p_spec.o \
+	src/p_switch.o \
+	src/p_telept.o \
+	src/p_tick.o \
+	src/p_user.o \
+	src/r_bsp.o \
+	src/r_data.o \
+	src/r_draw.o \
+	src/r_main.o \
+	src/r_plane.o \
+	src/r_segs.o \
+	src/r_sky.o \
+	src/r_things.o \
+	src/s_sound.o \
+	src/sha1.o \
+	src/sounds.o \
+	src/st_lib.o \
+	src/st_stuff.o \
+	src/statdump.o \
+	src/tables.o \
+	src/v_video.o \
+	src/w_checksum.o \
+	src/w_file.o \
+	src/w_file_stdc_unbuffered.o \
+	src/w_main.o \
+	src/w_wad.o \
+	src/wi_stuff.o \
+	src/z_zone.o \
+	src/i_input_riv.o \
+	src/i_rivsound.o \
+	src/i_rivmusic.o \
+	src/i_sound_riv.o \
+	src/i_video_riv.o
 
-CROSS_COMPILE ?= #arm-linux-gnueabihf-
+# Asset files to be added to the cartridge
+ASSETS=\
+	assets/0-entry.sh \
+	assets/freedoom1.wad \
+	assets/info.json
 
-ifeq ($(V),1)
-	VB=''
-else
-	VB=@
-endif
+# Executable file to compile
+EXE=src/doom.elf
 
-#LIBS+=-lXext -lX11 -lnsl -lm -lSDL
-#CFLAGS+=-Wunused-const-variable=0 
-#CFLAGS+=-fsanitize=address
-OBJS+=$(OBJDIR)/i_video_fbdev.o
-OBJS+=$(OBJDIR)/i_input_tty.o
+# Cartridge file to generate
+CARTRIDGE=freedoom.sqfs
 
-CC=$(CROSS_COMPILE)gcc  # gcc or g++
-CFLAGS+=-ggdb3 -Os
-LDFLAGS+=-Wl,--gc-sections
-CFLAGS+=-ggdb3 -Wall -DNORMALUNIX -DLINUX -DSNDSERV # -DUSEASM
-LIBS+=-lm -lc
+# Cartridge compression algorithm
+COMPRESSION=lzo
 
-ifneq ($(NOSDL),1)
-	LIBS+= -lSDL
-endif
+# RIVEMU exec shortcut for its SDK
+RIVEMU=rivemu
+RIVEMU_EXEC=$(RIVEMU) -quiet -no-window -sdk -workspace -exec
 
-# subdirectory for objects
-OBJDIR=build
-OUTPUT=fbdoom
+# Compilation flags
+CFLAGS=$(shell $(RIVEMU_EXEC) riv-opt-flags -Ospeed --cflags)
+LDFLAGS=$(shell $(RIVEMU_EXEC) riv-opt-flags -Ospeed --ldflags)
 
-SRC_DOOM = i_main.o dummy.o am_map.o doomdef.o doomstat.o dstrings.o d_event.o d_items.o d_iwad.o d_loop.o d_main.o d_mode.o d_net.o f_finale.o f_wipe.o g_game.o hu_lib.o hu_stuff.o info.o i_cdmus.o i_endoom.o i_joystick.o i_scale.o i_sound.o i_system.o i_timer.o memio.o m_argv.o m_bbox.o m_cheat.o m_config.o m_controls.o m_fixed.o m_menu.o m_misc.o m_random.o p_ceilng.o p_doors.o p_enemy.o p_floor.o p_inter.o p_lights.o p_map.o p_maputl.o p_mobj.o p_plats.o p_pspr.o p_saveg.o p_setup.o p_sight.o p_spec.o p_switch.o p_telept.o p_tick.o p_user.o r_bsp.o r_data.o r_draw.o r_main.o r_plane.o r_segs.o r_sky.o r_things.o sha1.o sounds.o statdump.o st_lib.o st_stuff.o s_sound.o tables.o v_video.o wi_stuff.o w_checksum.o w_file.o w_file_stdc_unbuffered.o w_main.o w_wad.o z_zone.o
-OBJS += $(addprefix $(OBJDIR)/, $(SRC_DOOM))
+all: $(CARTRIDGE)
 
-all:	 $(OUTPUT)
+# Generate FREEDOOM cartridge
+$(CARTRIDGE): $(EXE) $(ASSETS)
+	$(RIVEMU_EXEC) riv-mksqfs $^ $@ -comp $(COMPRESSION)
 
+# Compile DOOM executable
+$(EXE): $(OBJS)
+	$(RIVEMU_EXEC) gcc $(OBJS) -o $@ $(LDFLAGS)
+	$(RIVEMU_EXEC) riv-strip $@
+
+# Compile C source code
+src/%.o: src/%.c
+	$(RIVEMU_EXEC) gcc -c $< -o $@ $(CFLAGS)
+
+# Clean
 clean:
-	rm -rf $(OBJDIR)
-	rm -f $(OUTPUT)
-	rm -f $(OUTPUT).gdb
-	rm -f $(OUTPUT).map
+	rm -f *.sqfs src/*.elf src/*.o
 
-$(OUTPUT):	$(OBJS)
-	@echo [Linking $@]
-	$(VB)$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) \
-	-o $(OUTPUT) $(LIBS) -Wl,-Map,$(OUTPUT).map
-	@echo [Size]
-	-$(CROSS_COMPILE)size $(OUTPUT)
-
-$(OBJS): | $(OBJDIR)
-
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
-
-$(OBJDIR)/%.o:	%.c
-	@echo [Compiling $<]
-	$(VB)$(CC) $(CFLAGS) -c $< -o $@
-
-print:
-	@echo OBJS: $(OBJS)
-
+# Shortcut to play it with RIVEMU
+run: freedoom.sqfs
+	rivemu $(CARTRIDGE)

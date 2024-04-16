@@ -75,7 +75,7 @@ int			showMessages = 1;
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 9;
+int			screenblocks = 10;
 
 // temp for screenblocks (0-9)
 int			screenSize;
@@ -1130,8 +1130,8 @@ int     quitsounds2[8] =
 
 void M_QuitResponse(int key)
 {
-    if (key != key_menu_confirm)
-	return;
+    // if (key != key_menu_confirm)
+	// return;
     if (!netgame)
     {
 	if (gamemode == commercial)
@@ -1167,6 +1167,10 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
+    if (M_CheckParm("-autoquit") > 0) {
+        I_Quit();
+        return;
+    }
     DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
                  DEH_String(M_SelectEndMessage()));
 
@@ -1673,23 +1677,26 @@ boolean M_Responder (event_t* ev)
         {
 	    M_StartControlPanel ();
 
+/*
 	    if ( gamemode == retail )
 	      currentMenu = &ReadDef2;
 	    else
 	      currentMenu = &ReadDef1;
+*/
+        currentMenu = &ReadDef2;
 
 	    itemOn = 0;
 	    S_StartSound(NULL,sfx_swtchn);
 	    return true;
 	}
-        else if (key == key_menu_save)     // Save
+        else if (key == key_menu_save && !M_CheckParm("-nomenu"))     // Save
         {
 	    M_StartControlPanel();
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_SaveGame(0);
 	    return true;
         }
-        else if (key == key_menu_load)     // Load
+        else if (key == key_menu_load && !M_CheckParm("-nomenu"))     // Load
         {
 	    M_StartControlPanel();
 	    S_StartSound(NULL,sfx_swtchn);
@@ -1710,13 +1717,13 @@ boolean M_Responder (event_t* ev)
 	    S_StartSound(NULL,sfx_swtchn);
 	    return true;
         }
-        else if (key == key_menu_qsave)    // Quicksave
+        else if (key == key_menu_qsave && !M_CheckParm("-nomenu"))    // Quicksave
         {
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_QuickSave();
 	    return true;
         }
-        else if (key == key_menu_endgame)  // End game
+        else if (key == key_menu_endgame && !M_CheckParm("-nomenu"))  // End game
         {
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_EndGame(0);
@@ -1728,7 +1735,7 @@ boolean M_Responder (event_t* ev)
 	    S_StartSound(NULL,sfx_swtchn);
 	    return true;
         }
-        else if (key == key_menu_qload)    // Quickload
+        else if (key == key_menu_qload && !M_CheckParm("-nomenu"))    // Quickload
         {
 	    S_StartSound(NULL,sfx_swtchn);
 	    M_QuickLoad();
@@ -1754,7 +1761,7 @@ boolean M_Responder (event_t* ev)
     // Pop-up menu?
     if (!menuactive)
     {
-	if (key == key_menu_activate)
+	if (key == key_menu_activate && !M_CheckParm("-nomenu"))
 	{
 	    M_StartControlPanel ();
 	    S_StartSound(NULL,sfx_swtchn);
@@ -1847,7 +1854,7 @@ boolean M_Responder (event_t* ev)
 	S_StartSound(NULL,sfx_swtchx);
 	return true;
     }
-    else if (key == key_menu_back)
+    else if (key == key_menu_back && !M_CheckParm("-nomenu"))
     {
         // Go back to previous menu
 

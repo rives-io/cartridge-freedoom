@@ -52,33 +52,10 @@
 #define PACKEDATTR
 #endif
 
-// C99 integer types; with gcc we just use this.  Other compilers 
-// should add conditional statements that define the C99 types.
+#include <stdint.h>
+#include <stdbool.h>
 
-// What is really wanted here is stdint.h; however, some old versions
-// of Solaris don't have stdint.h and only have inttypes.h (the 
-// pre-standardisation version).  inttypes.h is also in the C99 
-// standard and defined to include stdint.h, so include this. 
-
-#include <inttypes.h>
-
-#ifdef __cplusplus
-
-// Use builtin bool type with C++.
-
-typedef bool boolean;
-
-#else
-
-typedef enum 
-{
-    false	= 0,
-    true	= 1,
-	undef	= 0xFFFFFFFF
-} boolean;
-
-#endif
-
+typedef int boolean;
 typedef uint8_t byte;
 
 #include <limits.h>

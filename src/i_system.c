@@ -51,6 +51,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include <riv.h>
+
 #ifdef __MACOSX__
 #include <CoreFoundation/CFUserNotification.h>
 #endif
@@ -224,6 +226,13 @@ boolean I_ConsoleStdout(void)
 //
 // I_Init
 //
+void I_Init (void)
+{
+    // enable tracking of all keys
+    for(int i=0;i<RIV_NUM_KEYCODE;++i) {
+        riv->tracked_keys[i] = true;
+    }
+}
 /*
 void I_Init (void)
 {
@@ -238,6 +247,15 @@ void I_BindVariables(void)
     I_BindSoundVariables();
 }
 */
+
+void I_Exit(int status)
+{
+#if ORIGCODE
+    SDL_Quit();
+#endif
+    exit(status);
+    while (true) {;}
+}
 
 //
 // I_Quit
@@ -257,11 +275,7 @@ void I_Quit (void)
         entry = entry->next;
     }
 
-#if ORIGCODE
-    SDL_Quit();
-
-    exit(0);
-#endif
+    I_Exit(0);
 }
 
 #if !defined(_WIN32) && !defined(__MACOSX__)
@@ -271,7 +285,8 @@ void I_Quit (void)
 
 static int ZenityAvailable(void)
 {
-    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+    // return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+    return 0;
 }
 
 // Escape special characters in the given string so that they can be
@@ -366,9 +381,7 @@ void I_Error (char *error, ...)
     if (already_quitting)
     {
         fprintf(stderr, "Warning: recursive call to I_Error detected.\n");
-#if ORIGCODE
-        exit(-1);
-#endif
+        I_Exit(-1);
     }
     else
     {
@@ -454,16 +467,7 @@ void I_Error (char *error, ...)
     }
 #endif
 
-    // abort();
-#if ORIGCODE
-    SDL_Quit();
-
-    exit(-1);
-#else
-    while (true)
-    {
-    }
-#endif
+    I_Exit(-1);
 }
 
 //

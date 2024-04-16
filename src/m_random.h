@@ -35,5 +35,6 @@ int P_Random (void);
 // Fix randoms for demos.
 void M_ClearRandom (void);
 
+void M_RandomInit(void);
 
 #endif

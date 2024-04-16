@@ -424,7 +424,7 @@ void AM_changeWindowLoc(void)
 void AM_initVariables(void)
 {
     int pnum;
-    static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0 };
+    static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0, 0 };
 
     automapactive = true;
     fb = I_VideoBuffer;
@@ -540,7 +540,7 @@ void AM_LevelInit(void)
 //
 void AM_Stop (void)
 {
-    static event_t st_notify = { 0, ev_keyup, AM_MSGEXITED, 0 };
+    static event_t st_notify = { 0, ev_keyup, AM_MSGEXITED, 0, 0 };
 
     AM_unloadPics();
     automapactive = false;

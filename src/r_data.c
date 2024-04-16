@@ -720,14 +720,13 @@ void R_InitData (void)
 int R_FlatNumForName (char* name)
 {
     int		i;
-    char	namet[9];
+    char	namet[9] = {0};
 
     i = W_CheckNumForName (name);
 
     if (i == -1)
     {
-	namet[8] = 0;
-	memcpy (namet, name,8);
+	memcpy (namet, name,strlen(name));
 	I_Error ("R_FlatNumForName: %s not found",namet);
     }
     return i - firstflat;

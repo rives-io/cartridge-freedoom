@@ -23,6 +23,7 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_random.h"
 
 //
 // D_DoomMain()
@@ -38,6 +39,7 @@ int main(int argc, char **argv)
 
     myargc = argc;
     myargv = argv;
+    M_RandomInit();
 
     M_FindResponseFile();
 

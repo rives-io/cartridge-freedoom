@@ -760,7 +760,7 @@ const iwad_t **D_FindAllIWADs(int mask)
 
     // Try to find all IWADs
 
-    for (i=0; i<arrlen(iwads); ++i)
+    for (i=0; i<(int)arrlen(iwads); ++i)
     {
         if (((1 << iwads[i].mission) & mask) == 0)
         {
@@ -815,7 +815,7 @@ char *D_SuggestIWADName(GameMission_t mission, GameMode_t mode)
 {
     int i;
 
-    for (i = 0; i < arrlen(iwads); ++i)
+    for (i = 0; i < (int)arrlen(iwads); ++i)
     {
         if (iwads[i].mission == mission && iwads[i].mode == mode)
         {
@@ -830,7 +830,7 @@ char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
 {
     int i;
 
-    for (i = 0; i < arrlen(iwads); ++i)
+    for (i = 0; i < (int)arrlen(iwads); ++i)
     {
         if (iwads[i].mission == mission
          && (mode == indetermined || iwads[i].mode == mode))

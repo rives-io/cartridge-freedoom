@@ -1,0 +1,5 @@
+*.o
+*.sqfs
+*.elf
+*.rivtape
+*.json

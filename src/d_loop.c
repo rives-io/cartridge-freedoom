@@ -74,7 +74,7 @@ int gametic;
 // When set to true, a single tic is run each time TryRunTics() is called.
 // This is used for -timedemo mode.
 
-boolean singletics = false;
+boolean singletics = true;
 
 // Index of the local player.
 

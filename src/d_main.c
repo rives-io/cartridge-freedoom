@@ -197,13 +197,21 @@ void D_Display (void)
     }
 
     // save the current screen if about to wipe
-    if (gamestate != wipegamestate)
-		{
-		wipe = true;
-		wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+#if 0
+    if (!M_ParmExists("-nowipe")) {
+        if (gamestate != wipegamestate)
+    		{
+    		wipe = true;
+    		wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+        }
+        else
+        	wipe = false;
+    } else {
+        wipe = false;
     }
-    else
-    	wipe = false;
+#else
+    wipe = false;
+#endif
 
     if (gamestate == GS_LEVEL && gametic)
     	HU_Erase();
@@ -1166,6 +1174,7 @@ void D_DoomMain (void)
     int numiwadlumps;
 #endif
 
+    I_Init();
     I_AtExit(D_Endoom, false);
 
     // print banner
@@ -1201,7 +1210,7 @@ void D_DoomMain (void)
     if (M_CheckParm("-search"))
     {
         NET_MasterQuery();
-        exit(0);
+        I_Exit(0);
     }
 
     //!
@@ -1217,7 +1226,7 @@ void D_DoomMain (void)
     if (p)
     {
         NET_QueryAddress(myargv[p+1]);
-        exit(0);
+        I_Exit(0);
     }
 
     //!
@@ -1229,7 +1238,7 @@ void D_DoomMain (void)
     if (M_CheckParm("-localsearch"))
     {
         NET_LANQuery();
-        exit(0);
+        I_Exit(0);
     }
 
 #endif
@@ -1784,11 +1793,9 @@ void D_DoomMain (void)
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
 
-    if (M_CheckParmWithArgs("-statdump", 1))
-    {
-        I_AtExit(StatDump, true);
-        DEH_printf("External statistics registered.\n");
-    }
+    StatDump();
+    // I_AtExit(StatDump, true);
+    // DEH_printf("External statistics registered.\n");
 
     //!
     // @arg <x>
