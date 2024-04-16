@@ -22,6 +22,10 @@ make
 
 ## Playing
 
+First you need to download `freedoom.sqfs`, you can either download from
+[this link](https://github.com/rives-io/cartridge-freedoom/releases/latest/download/freedoom.sqfs)
+or build yourself following the instructions above.
+
 To play, just run with `rivemu`:
 
 ```sh
@@ -70,3 +74,10 @@ Running DOOM inside the Cartesi machine in real time was originally accomplished
 Since then the project evolved into a fantasy console called RIV,
 and its distribution platform called RIVES,
 and now FREEDOOM is just a game of this ecosystem.
+
+## Compute machine
+
+A cartesi machine for computing scores of DOOM game sessions
+is provided in the [/compute-machine](/compute-machine) directory
+as an example on how to embed this in a cartesi machine.
+
