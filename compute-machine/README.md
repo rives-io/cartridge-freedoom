@@ -73,5 +73,5 @@ The *tape* is limited to 64KB, big enough for hours of DOOM gameplay,
 a game session should never reach this value.
 The *outcard* is also limited to 64KB, big enough to save any JSON score.
 The computation of a session is limited around 96 billion RISC-V instructions,
-enough to very about 30 minutes of DOOM gameplay,
+enough to verify about 30 minutes of DOOM gameplay,
 while the validation should take less than 1/4 of the gameplay time in modern machines.

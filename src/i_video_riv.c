@@ -100,9 +100,9 @@ void cmap_to_rgb565(uint16_t * out, uint8_t * in, int in_pixels)
 
 void I_InitGraphics (void)
 {
-    riv->framebuffer_desc.width = SCREENWIDTH;
-    riv->framebuffer_desc.height = SCREENHEIGHT;
-    riv->framebuffer_desc.target_fps = 35;
+    riv->width = SCREENWIDTH;
+    riv->height = SCREENHEIGHT;
+    riv->target_fps = 35;
 
     I_VideoBuffer = riv->framebuffer;
     screenvisible = true;
