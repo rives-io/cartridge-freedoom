@@ -99,14 +99,22 @@ CARTRIDGE=freedoom.sqfs
 COMPRESSION=lzo
 
 # RIVEMU exec shortcut for its SDK
-RIVEMU=rivemu
-RIVEMU_EXEC=$(RIVEMU) -quiet -no-window -sdk -workspace -exec
+RIVEMU_RUN=rivemu
+RIVEMU_EXEC=rivemu -quiet -no-window -sdk -workspace -exec
+ifneq (,$(wildcard /usr/sbin/riv-run))
+	RIVEMU_RUN=riv-run
+	RIVEMU_EXEC=
+endif
 
 # Compilation flags
 CFLAGS=$(shell $(RIVEMU_EXEC) riv-opt-flags -Ospeed --cflags)
 LDFLAGS=$(shell $(RIVEMU_EXEC) riv-opt-flags -Ospeed --ldflags)
 
-all: $(CARTRIDGE)
+build: $(CARTRIDGE)
+
+# Run cartridge
+run: $(CARTRIDGE)
+	$(RIVEMU_RUN) $<
 
 # Generate FREEDOOM cartridge
 $(CARTRIDGE): $(EXE) $(ASSETS)
@@ -124,7 +132,3 @@ src/%.o: src/%.c
 # Clean
 clean:
 	rm -f *.sqfs src/*.elf src/*.o
-
-# Shortcut to play it with RIVEMU
-run: freedoom.sqfs
-	rivemu $(CARTRIDGE)
