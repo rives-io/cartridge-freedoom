@@ -461,7 +461,9 @@ void D_DoomLoop (void)
 		if (screenvisible)
 		{
 			D_Display ();
-		}
+		} else {
+            I_FinishUpdate ();
+        }
     }
 }
 

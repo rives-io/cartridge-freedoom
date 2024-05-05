@@ -105,7 +105,7 @@ void I_InitGraphics (void)
     riv->target_fps = 35;
 
     I_VideoBuffer = riv->framebuffer;
-    screenvisible = true;
+    screenvisible = riv->yielding;
 
     extern int I_InitInput(void);
     I_InitInput();
