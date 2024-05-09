@@ -1,6 +1,6 @@
-FREEDOOM_VER=v0.2.0
+FREEDOOM_VER=v0.3.0
 KERNEL_VER=v0.19.1-riv1
-RIV_VER=v0.3-rc10
+RIV_VER=v0.3-rc12
 LINUX_VER=linux-6.5.9-ctsi-1-$(KERNEL_VER)
 TAPE=gameplay-example.rivtape
 
