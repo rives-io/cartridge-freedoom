@@ -114,7 +114,7 @@ build: $(CARTRIDGE)
 
 # Test cartridge (for development)
 test: $(EXE)
-	$(RIVEMU_RUN) -no-loading -workspace -exec ./0-entry.sh
+	$(RIVEMU_RUN) -no-loading -print-frame-outcard -workspace -exec ./0-entry.sh
 
 # Run cartridge
 run: $(CARTRIDGE)

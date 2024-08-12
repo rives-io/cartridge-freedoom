@@ -1797,6 +1797,7 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
 {
 
     wbs = wbstartstruct;
+    wbs->completed = false;
 
 #ifdef RANGECHECKING
     if (gamemode != commercial)

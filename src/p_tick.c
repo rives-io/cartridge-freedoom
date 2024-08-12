@@ -147,14 +147,20 @@ void P_Ticker (void)
     P_UpdateSpecials ();
     P_RespawnSpecials ();
 
-    // for par times
-    leveltime++;	
-
     if (playeringame[0]) {
-        StatPartialDump(players[0].killcount,
-                        players[0].itemcount,
-                        players[0].secretcount,
-                        leveltime,
-                        players[0].playerstate == PST_DEAD);
+        wminfo.last = gamemap -1;
+        wminfo.epsd = gameepisode -1;
+        wminfo.maxkills = totalkills;
+        wminfo.maxitems = totalitems;
+        wminfo.maxsecret = totalsecret;
+        wminfo.plyr[0].in = playeringame[0];
+        wminfo.plyr[0].skills = players[0].killcount;
+        wminfo.plyr[0].sitems = players[0].itemcount;
+        wminfo.plyr[0].ssecret = players[0].secretcount;
+        wminfo.plyr[0].stime = leveltime;
+        StatCopy(&wminfo);
     }
+
+    // for par times
+    leveltime++;
 }

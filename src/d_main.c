@@ -1729,6 +1729,15 @@ void D_DoomMain (void)
         autostart = true;
     }
 
+    p = M_CheckParmWithArgs("-level", 1);
+
+    if (p)
+    {
+        startepisode = 1;
+        startmap = atoi (myargv[p+1]);
+        autostart = true;
+    }
+
     // Undocumented:
     // Invoked by setup to test the controls.
 

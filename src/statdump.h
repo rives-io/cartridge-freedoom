@@ -18,7 +18,6 @@
 #define DOOM_STATDUMP_H
 
 void StatCopy(wbstartstruct_t *stats);
-void StatDump(void);
-void StatPartialDump(int kills, int items, int secrets, int time, bool died);
+void StatDump();
 
 #endif /* #ifndef DOOM_STATDUMP_H */

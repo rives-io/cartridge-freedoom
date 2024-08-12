@@ -185,6 +185,7 @@ typedef struct
 
     // if true, splash the secret level
     boolean	didsecret;
+    boolean completed;
     
     // previous and next levels, origin 0
     int		last;
