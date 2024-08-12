@@ -85,12 +85,12 @@ OBJS=\
 
 # Asset files to be added to the cartridge
 ASSETS=\
-	assets/0-entry.sh \
-	assets/freedoom1.wad \
-	assets/info.json
+	0-entry.sh \
+	freedoom1.wad \
+	info.json
 
 # Executable file to compile
-EXE=src/doom.elf
+EXE=doom.elf
 
 # Cartridge file to generate
 CARTRIDGE=freedoom.sqfs
@@ -112,6 +112,10 @@ LDFLAGS=$(shell $(RIVEMU_EXEC) riv-opt-flags -Ospeed --ldflags)
 
 build: $(CARTRIDGE)
 
+# Test cartridge (for development)
+test: $(EXE)
+	$(RIVEMU_RUN) -workspace -exec ./0-entry.sh
+
 # Run cartridge
 run: $(CARTRIDGE)
 	$(RIVEMU_RUN) $<
@@ -131,4 +135,4 @@ src/%.o: src/%.c
 
 # Clean
 clean:
-	rm -f *.sqfs src/*.elf src/*.o
+	rm -f *.sqfs *.elf src/*.o

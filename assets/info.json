@@ -1,9 +1,0 @@
-{
-    "name": "FREEDOOM",
-    "summary": "Port of the original DOOM game with free assets.",
-    "description": "This is an adaptation of the original DOOM game.\nIn this adaptation you can play only the first 3 levels.\nEvery item, kill, secret or level increases your overall score,\nwhile every second decreases your score.\nWhat is the best score you can make?\n\nControls:\n- LEFT\/RIGHT\/UP\/DOWN to move\n- CTRL to shoot\n- SPACE to use\n- TAB to see the map\n- Hold SHIFT to run",
-    "tags": ["action", "first person", "3d", "shooter"],
-    "links": [
-        "https://github.com/rives-io/cartridge-freedoom"
-    ]
-}
