@@ -335,15 +335,14 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
-	|| joybuttons[joybstrafe]; 
+	|| gamekeydown[joybstrafe];
 
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
     speed = key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed] 
-         || joybuttons[joybspeed];
+         || gamekeydown[key_speed]
+         || gamekeydown[joybspeed];
  
     forward = side = 0;
     
@@ -429,11 +428,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->chatchar = HU_dequeueChatChar(); 
  
     if (gamekeydown[key_fire] || mousebuttons[mousebfire] 
-	|| joybuttons[joybfire]) 
+	|| gamekeydown[joybfire])
 	cmd->buttons |= BT_ATTACK; 
  
     if (gamekeydown[key_use]
-     || joybuttons[joybuse]
+     || gamekeydown[joybuse]
      || mousebuttons[mousebuse])
     { 
 	cmd->buttons |= BT_USE;
@@ -509,7 +508,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         // strafe double click
         bstrafe =
             mousebuttons[mousebstrafe] 
-            || joybuttons[joybstrafe]; 
+            || gamekeydown[joybstrafe];
         if (bstrafe != dclickstate2 && dclicktime2 > 1 ) 
         { 
             dclickstate2 = bstrafe; 

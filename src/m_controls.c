@@ -127,8 +127,8 @@ int key_weapon5 = '5';
 int key_weapon6 = '6';
 int key_weapon7 = '7';
 int key_weapon8 = '8';
-int key_prevweapon = KEY_PREVWEAPON;
-int key_nextweapon = KEY_NEXTWEAPON;
+int key_prevweapon = 's';
+int key_nextweapon = 'd';
 
 // Map control keys:
 
@@ -177,10 +177,10 @@ int key_menu_screenshot = 0;
 // Joystick controls
 //
 
-int joybfire = 0;
-int joybstrafe = 1;
-int joybuse = 3;
-int joybspeed = 2;
+int joybfire = 'f';
+int joybstrafe = 'a';
+int joybuse = 'c';
+int joybspeed = 'z';
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;

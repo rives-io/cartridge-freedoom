@@ -229,8 +229,10 @@ boolean I_ConsoleStdout(void)
 void I_Init (void)
 {
     // enable tracking of all keys
-    for(int i=0;i<RIV_NUM_KEYCODE;++i) {
-        riv->tracked_keys[i] = true;
+    if (M_CheckParm("-nokeyboard") == 0) {
+        for(int i=0;i<RIV_NUM_KEYCODE;++i) {
+            riv->tracked_keys[i] = true;
+        }
     }
 }
 /*

@@ -33,13 +33,15 @@ rivemu freedoom.sqfs
 ```
 
 These are the controls to play:
-- Ctrl - Fire
-- Space - Use / Open
-- Left/Right - Turn
-- Up/Down - Walk
-- Alt + Left/Right - Walk laterally
-- Tab - Game Map
-- Shift - Run
+Controls:
+- LEFT/RIGHT/UP/DOWN    - Move
+- CTRL/F/R2             - Shoot
+- SPACE/C/A3            - Use
+- SHIFT/Z/A1            - Run
+- ALT/A/L2 + LEFT/RIGHT - Strafe
+- S/L1                  - Prev weapon
+- D/R1                  - Next weapon
+- TAB/START             - Map
 
 ## Recording and replaying a tape
 
