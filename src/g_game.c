@@ -1480,6 +1480,7 @@ void G_DoCompleted (void)
     gamestate = GS_INTERMISSION; 
     viewactive = false; 
     automapactive = false; 
+    wminfo.slevels++;
 
     StatCopy(&wminfo);
  

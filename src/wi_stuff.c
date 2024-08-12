@@ -776,10 +776,17 @@ static boolean		snl_pointeron = false;
 void WI_initShowNextLoc(void)
 {
     int i = M_CheckParmWithArgs("-levelquit", 1);
-
     if (i > 0) {
         int level = atoi(myargv[i+1]);
         if (wbs->last + 1 == level) {
+            I_Quit();
+        }
+    }
+
+    i = M_CheckParmWithArgs("-numlevelsquit", 1);
+    if (i > 0) {
+        int num_levels = atoi(myargv[i+1]);
+        if (wbs->slevels >= num_levels) {
             I_Quit();
         }
     }

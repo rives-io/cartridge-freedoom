@@ -189,6 +189,7 @@ typedef struct
     // previous and next levels, origin 0
     int		last;
     int		next;	
+    int     slevels;
     
     int		maxkills;
     int		maxitems;
