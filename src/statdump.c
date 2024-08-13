@@ -47,6 +47,11 @@ typedef struct sum_stats {
     int numlevels;
     int maxlevels;
     int frames;
+
+    int punchhits;
+    int punchmisses;
+    int pistolhits;
+    int pistolmisses;
 } sum_stats_t;
 
 /* Display statistics for a single player. */
@@ -54,19 +59,26 @@ typedef struct sum_stats {
 static void PrintPlayerStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *stats, int player_num)
 {
     wbplayerstruct_t *player = &stats->plyr[0];
-    fprintf(stream, "\t\"kills\": %d,\n\t\"maxkills\": %d,\n",
+    fprintf(stream, "\t\"kills\":%d,\n\t\"maxkills\":%d,\n",
                     player->skills, stats->maxkills);
     sum->numkills += player->skills;
     sum->maxkills += stats->maxkills;
-    fprintf(stream, "\t\"items\": %d,\n\t\"maxitems\": %d,\n",
+    fprintf(stream, "\t\"items\":%d,\n\t\"maxitems\":%d,\n",
                     player->sitems, stats->maxitems);
     sum->numitems += player->sitems;
     sum->maxitems += stats->maxitems;
-    fprintf(stream, "\t\"secrets\": %d,\n\t\"maxsecrets\": %d,\n",
+    fprintf(stream, "\t\"secrets\":%d,\n\t\"maxsecrets\":%d,\n",
                     player->ssecret, stats->maxsecret);
     sum->numsecrets += player->ssecret;
     sum->maxsecrets += stats->maxsecret;
-
+    fprintf(stream, "\t\"punchhits\":%d,\n\t\"punchmisses\":%d,\n",
+                    player->spunchhits, player->spunchmisses);
+    sum->punchhits += player->spunchhits;
+    sum->punchmisses += player->spunchmisses;
+    fprintf(stream, "\t\"pistolhits\":%d,\n\t\"pistolmisses\":%d,\n",
+                    player->spistolhits, player->spistolmisses);
+    sum->pistolhits += player->spistolhits;
+    sum->pistolmisses += player->spistolmisses;
 }
 
 /* Print details of a statistics buffer to the given file. */
@@ -75,14 +87,14 @@ static void PrintStats(FILE *stream, sum_stats_t *sum, wbstartstruct_t *stats)
     fprintf(stream, "{\n");
     int episode = stats->epsd;
     int level = stats->last;
-    fprintf(stream, "\t\"name\": \"E%iM%i\",\n", episode + 1, level + 1);
+    fprintf(stream, "\t\"name\":\"E%iM%i\",\n", episode + 1, level + 1);
 
     int leveltime = stats->plyr[0].stime;
 
     if (stats->plyr[0].in) {
         PrintPlayerStats(stream, sum, stats, 0);
     }
-    fprintf(stream, "\t\"frames\": %d\n", leveltime);
+    fprintf(stream, "\t\"frames\":%d\n", leveltime);
     sum->frames += leveltime;
     if (stats->completed) {
         sum->numlevels += 1;
@@ -121,7 +133,7 @@ void StatDump()
     }
     sum_stats_t sum = {0};
     fprintf(stream, "JSON{\n");
-    fprintf(stream, "\"levelstats\": [");
+    fprintf(stream, "\"levelstats\":[");
     for (int i = 0; i < num_captured_stats; ++i) {
         if (i != 0) {
             fprintf(stream, ", ");
@@ -136,16 +148,20 @@ void StatDump()
                 + sum.numkills * 2000
                 + sum.numitems * 500
                 - sum.frames;
-    fprintf(stream, "\"score\": %ld,\n", score);
-    fprintf(stream, "\"levels\": %d,\n", sum.numlevels);
-    fprintf(stream, "\"maxlevels\": %d,\n", sum.maxlevels);
-    fprintf(stream, "\"kills\": %d,\n", sum.numkills);
-    fprintf(stream, "\"maxkills\": %d,\n", sum.maxkills);
-    fprintf(stream, "\"items\": %d,\n", sum.numitems);
-    fprintf(stream, "\"maxitems\": %d,\n", sum.maxitems);
-    fprintf(stream, "\"secrets\": %d,\n", sum.numsecrets);
-    fprintf(stream, "\"maxsecrets\": %d,\n", sum.maxsecrets);
-    fprintf(stream, "\"frames\": %d\n", sum.frames);
+    fprintf(stream, "\"score\":%ld,\n", score);
+    fprintf(stream, "\"levels\":%d,\n", sum.numlevels);
+    fprintf(stream, "\"maxlevels\":%d,\n", sum.maxlevels);
+    fprintf(stream, "\"kills\":%d,\n", sum.numkills);
+    fprintf(stream, "\"maxkills\":%d,\n", sum.maxkills);
+    fprintf(stream, "\"items\":%d,\n", sum.numitems);
+    fprintf(stream, "\"maxitems\":%d,\n", sum.maxitems);
+    fprintf(stream, "\"secrets\":%d,\n", sum.numsecrets);
+    fprintf(stream, "\"maxsecrets\":%d,\n", sum.maxsecrets);
+    fprintf(stream, "\"punchhits\":%d,\n\"punchmisses\":%d,\n",
+                    sum.punchhits, sum.punchmisses);
+    fprintf(stream, "\"pistolhits\":%d,\n\"pistolmisses\":%d,\n",
+                    sum.pistolhits, sum.pistolmisses);
+    fprintf(stream, "\"frames\":%d\n", sum.frames);
     fprintf(stream, "}");
     fflush(stream);
 

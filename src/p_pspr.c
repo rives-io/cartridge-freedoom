@@ -482,6 +482,9 @@ A_Punch
 					     player->mo->y,
 					     linetarget->x,
 					     linetarget->y);
+        player->punchhits++;
+    } else {
+        player->punchmisses++;
     }
 }
 
@@ -668,6 +671,12 @@ A_FirePistol
 
     P_BulletSlope (player->mo);
     P_GunShot (player->mo, !player->refire);
+
+    if (linetarget) {
+        player->pistolhits++;
+    } else {
+        player->pistolmisses++;
+    }
 }
 
 

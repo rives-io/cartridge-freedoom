@@ -1868,7 +1868,7 @@ void D_DoomMain (void)
                 }
             }),
             .duration = -1,
-            .volume = 0.4,
+            .volume = 0.3,
         });
     }
 

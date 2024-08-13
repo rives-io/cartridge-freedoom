@@ -1474,6 +1474,10 @@ void G_DoCompleted (void)
 	wminfo.plyr[i].sitems = players[i].itemcount; 
 	wminfo.plyr[i].ssecret = players[i].secretcount; 
 	wminfo.plyr[i].stime = leveltime; 
+    wminfo.plyr[i].spunchhits = players[i].punchhits;
+    wminfo.plyr[i].spunchmisses = players[i].punchmisses;
+    wminfo.plyr[i].spistolhits = players[i].pistolhits;
+    wminfo.plyr[i].spistolmisses = players[i].pistolmisses;
 	memcpy (wminfo.plyr[i].frags, players[i].frags 
 		, sizeof(wminfo.plyr[i].frags)); 
     } 

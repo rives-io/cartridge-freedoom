@@ -158,6 +158,10 @@ void P_Ticker (void)
         wminfo.plyr[0].sitems = players[0].itemcount;
         wminfo.plyr[0].ssecret = players[0].secretcount;
         wminfo.plyr[0].stime = leveltime;
+        wminfo.plyr[0].spunchhits = players[0].punchhits;
+        wminfo.plyr[0].spunchmisses = players[0].punchmisses;
+        wminfo.plyr[0].spistolhits = players[0].pistolhits;
+        wminfo.plyr[0].spistolmisses = players[0].pistolmisses;
         StatCopy(&wminfo);
     }
 

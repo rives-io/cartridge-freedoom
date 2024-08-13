@@ -158,6 +158,10 @@ typedef struct player_s
     // True if secret level has been done.
     boolean		didsecret;	
 
+    int punchhits;
+    int punchmisses;
+    int pistolhits;
+    int pistolmisses;
 } player_t;
 
 
@@ -177,6 +181,10 @@ typedef struct
     int		frags[4];
     int		score;	// current score on entry, modified on return
   
+    int     spunchhits;
+    int     spunchmisses;
+    int     spistolhits;
+    int     spistolmisses;
 } wbplayerstruct_t;
 
 typedef struct
