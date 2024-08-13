@@ -4,9 +4,9 @@ cat $WAD > /dev/null # force file cache
 if [ $# -eq 0 ]; then # no arguments
     exec ./doom.elf \
         -iwad $WAD \
-        -skill 5 \
+        -skill 3 \
         -level 1 \
-        -numlevelsquit 2 \
+        -numlevelsquit 3 \
         -deathquit \
         -autoquit \
         -nomenu

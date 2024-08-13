@@ -25,6 +25,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <riv.h>
+
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -1851,6 +1855,21 @@ void D_DoomMain (void)
 			G_InitNew (startskill, startepisode, startmap);
 		else
 			D_StartTitle ();                // start up intro loop
+    }
+
+    p = M_CheckParmWithArgs("-nomusic", 1);
+    if (!p) {
+        riv_sound(&(riv_sound_desc){
+            .buffer_id = riv_make_soundbuffer(&(riv_soundbuffer_desc){
+                .format = RIV_SOUNDFORMAT_MP3,
+                .data = {
+                    .data = mmap(NULL, 1024460, PROT_READ, MAP_SHARED, open("song.mp3", O_RDONLY), 0),
+                    .size = 1024460,
+                }
+            }),
+            .duration = -1,
+            .volume = 0.4,
+        });
     }
 
     D_DoomLoop ();  // never returns

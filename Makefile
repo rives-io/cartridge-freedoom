@@ -87,7 +87,8 @@ OBJS=\
 ASSETS=\
 	0-entry.sh \
 	freedoom1.wad \
-	info.json
+	info.json \
+	song.mp3
 
 # Executable file to compile
 EXE=doom.elf
@@ -114,7 +115,7 @@ build: $(CARTRIDGE)
 
 # Test cartridge (for development)
 test: $(EXE)
-	$(RIVEMU_RUN) -no-loading -print-frame-outcard -workspace -exec ./0-entry.sh
+	$(RIVEMU_RUN) -no-loading -workspace -exec ./0-entry.sh
 
 # Run cartridge
 run: $(CARTRIDGE)
