@@ -35,8 +35,8 @@ int TranslateKey(int key) {
         case RIV_GAMEPAD_A2: return KEY_ENTER; // Message
         case RIV_GAMEPAD_A3: return ' '; // Use
         case RIV_GAMEPAD_A4: return KEY_BACKSPACE; // Back
-        case RIV_GAMEPAD_L1: return KEY_PREVWEAPON; // Previous weapon
-        case RIV_GAMEPAD_R1: return KEY_NEXTWEAPON; // Next weapon
+        case RIV_GAMEPAD_L1: return 's'; // Previous weapon
+        case RIV_GAMEPAD_R1: return 'd'; // Next weapon
         case RIV_GAMEPAD_L2: return KEY_RALT; // Strafe
         case RIV_GAMEPAD_R2: return KEY_RCTRL; // Fire
         case RIV_GAMEPAD_SELECT: return KEY_ESCAPE; // Menu
