@@ -9,7 +9,8 @@ if [ $# -eq 0 ]; then # no arguments
         -numlevelsquit 3 \
         -deathquit \
         -autoquit \
-        -nomenu
+        -nomenu \
+        -nocheat
 else
     exec ./doom.elf -iwad $WAD "$@"
 fi

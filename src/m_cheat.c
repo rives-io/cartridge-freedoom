@@ -22,6 +22,7 @@
 
 #include "doomtype.h"
 #include "m_cheat.h"
+#include "m_argv.h"
 
 //
 // CHEAT SEQUENCE PACKAGE
@@ -36,6 +37,10 @@ cht_CheckCheat
 ( cheatseq_t*	cht,
   char		key )
 {
+    if (M_CheckParm("-nocheat") > 0) {
+        return false;
+    }
+
     // if we make a short sequence on a cheat with parameters, this 
     // will not work in vanilla doom.  behave the same.
 
