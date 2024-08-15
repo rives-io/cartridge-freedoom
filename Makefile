@@ -88,7 +88,8 @@ ASSETS=\
 	0-entry.sh \
 	freedoom1.wad \
 	info.json \
-	song.mp3
+	song.mp3 \
+	cover.png
 
 # Executable file to compile
 EXE=doom.elf
