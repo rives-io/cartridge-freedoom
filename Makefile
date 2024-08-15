@@ -98,7 +98,7 @@ EXE=doom.elf
 CARTRIDGE=freedoom.sqfs
 
 # Cartridge compression algorithm
-COMPRESSION=lzo
+COMPRESSION=lzo -Xcompression-level 9 -b 512K
 
 # RIVEMU exec shortcut for its SDK
 RIVEMU_RUN=rivemu
