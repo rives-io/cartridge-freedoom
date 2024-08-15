@@ -223,7 +223,7 @@ void P_DeathThink (player_t* player)
 		M_QuitDOOM(0);
 	}
 
-    if (player->cmd.buttons & BT_USE)
+    if (player->cmd.buttons & BT_USE && M_CheckParm("-deathquit") == 0)
 	player->playerstate = PST_REBORN;
 }
 
