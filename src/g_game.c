@@ -1361,21 +1361,13 @@ void G_DoCompleted (void)
 
         if (gameversion == exe_chex)
         {
-            if (gamemap == 5)
-            {
-                gameaction = ga_victory;
-                return;
-            }
         }
         else
         {
             switch(gamemap)
             {
-              case 8:
-                gameaction = ga_victory;
-                return;
-              case 9: 
-                for (i=0 ; i<MAXPLAYERS ; i++) 
+              case 9:
+                for (i=0 ; i<MAXPLAYERS ; i++)
                     players[i].didsecret = true; 
                 break;
             }
@@ -1383,13 +1375,6 @@ void G_DoCompleted (void)
     }
 
 //#if 0  Hmmm - why?
-    if ( (gamemap == 8)
-	 && (gamemode != commercial) ) 
-    {
-	// victory 
-	gameaction = ga_victory; 
-	return; 
-    } 
 	 
     if ( (gamemap == 9)
 	 && (gamemode != commercial) ) 
@@ -1454,6 +1439,7 @@ void G_DoCompleted (void)
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
     wminfo.completed = true;
+    wminfo.slevels++;
 
     // Set par time. Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array. It's necessary to emulate this
@@ -1481,13 +1467,42 @@ void G_DoCompleted (void)
 	memcpy (wminfo.plyr[i].frags, players[i].frags 
 		, sizeof(wminfo.plyr[i].frags)); 
     } 
+
+    StatCopy(&wminfo);
  
+    if (gamemode != commercial)
+    {
+        // Chex Quest ends after 5 levels, rather than 8.
+
+        if (gameversion == exe_chex)
+        {
+            if (gamemap == 5)
+            {
+                gameaction = ga_victory;
+                return;
+            }
+        }
+        else
+        {
+            switch(gamemap)
+            {
+              case 8:
+                gameaction = ga_victory;
+                return;
+            }
+        }
+    }
+    if ( (gamemap == 8)
+     && (gamemode != commercial) )
+    {
+    // victory
+    gameaction = ga_victory;
+    return;
+    }
+
     gamestate = GS_INTERMISSION; 
     viewactive = false; 
     automapactive = false; 
-    wminfo.slevels++;
-
-    StatCopy(&wminfo);
  
     WI_Start (&wminfo); 
 } 

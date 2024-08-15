@@ -28,6 +28,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "s_sound.h"
+#include "m_argv.h"
 
 // Data.
 #include "d_main.h"
@@ -209,8 +210,11 @@ void F_Ticker (void)
 	finalecount = 0;
 	finalestage = F_STAGE_ARTSCREEN;
 	wipegamestate = -1;		// force a wipe
-	if (gameepisode == 3)
+	if (gameepisode == 3) {
 	    S_StartMusic (mus_bunny);
+    }
+    } else if (finalestage == F_STAGE_ARTSCREEN && finalecount >= 35*10 && M_CheckParm("-autoquit") > 0) {
+        I_Quit();
     }
 }
 
