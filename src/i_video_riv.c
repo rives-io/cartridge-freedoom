@@ -5,6 +5,8 @@
 #include "d_main.h"
 #include "i_video.h"
 #include "z_zone.h"
+#include "i_system.h"
+#include "statdump.h"
 
 #include "tables.h"
 #include "doomkeys.h"
@@ -134,7 +136,10 @@ void I_UpdateNoBlit (void)
 
 void I_FinishUpdate (void)
 {
-    riv_present();
+    StatDump();
+    if (!riv_present()) {
+        I_Quit();
+    }
     extern void I_GetEvent(void);
     I_GetEvent();
 }

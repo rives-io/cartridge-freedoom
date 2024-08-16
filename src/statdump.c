@@ -36,6 +36,9 @@
 #define MAX_CAPTURES 32
 static wbstartstruct_t captured_stats[MAX_CAPTURES];
 static int num_captured_stats = 0;
+static int showstats = 0;
+static int limitframes = 0;
+static FILE *outcardstream;
 
 typedef struct sum_stats {
     int numkills;
@@ -122,18 +125,17 @@ void StatCopy(wbstartstruct_t *stats)
         /* Copy stats */
         memcpy(&captured_stats[to_save_index], stats, sizeof(wbstartstruct_t));
     }
-    StatDump();
 }
 
 void StatDump()
 {
-    FILE *stream = fmemopen(riv->outcard, RIV_SIZE_OUTCARD, "wb");
+    FILE *stream = outcardstream;
     if (!stream) {
         return;
     }
+    fseek(stream, 0, SEEK_SET);
+    fprintf(stream, "JSON{\n\"levelstats\":[");
     sum_stats_t sum = {0};
-    fprintf(stream, "JSON{\n");
-    fprintf(stream, "\"levelstats\":[");
     for (int i = 0; i < num_captured_stats; ++i) {
         if (i != 0) {
             fprintf(stream, ", ");
@@ -149,22 +151,58 @@ void StatDump()
                 + sum.numitems * 500
                 - sum.frames;
     fprintf(stream, "\"score\":%ld,\n", score);
-    fprintf(stream, "\"levels\":%d,\n", sum.numlevels);
-    fprintf(stream, "\"maxlevels\":%d,\n", sum.maxlevels);
-    fprintf(stream, "\"kills\":%d,\n", sum.numkills);
-    fprintf(stream, "\"maxkills\":%d,\n", sum.maxkills);
-    fprintf(stream, "\"items\":%d,\n", sum.numitems);
-    fprintf(stream, "\"maxitems\":%d,\n", sum.maxitems);
-    fprintf(stream, "\"secrets\":%d,\n", sum.numsecrets);
-    fprintf(stream, "\"maxsecrets\":%d,\n", sum.maxsecrets);
-    fprintf(stream, "\"punchhits\":%d,\n\"punchmisses\":%d,\n",
-                    sum.punchhits, sum.punchmisses);
-    fprintf(stream, "\"pistolhits\":%d,\n\"pistolmisses\":%d,\n",
-                    sum.pistolhits, sum.pistolmisses);
-    fprintf(stream, "\"frames\":%d\n", sum.frames);
-    fprintf(stream, "}");
+    fprintf(stream, "\"levels\":%d,\n\"maxlevels\":%d,\n", sum.numlevels, sum.maxlevels);
+    fprintf(stream, "\"kills\":%d,\n\"maxkills\":%d,\n", sum.numkills, sum.maxkills);
+    fprintf(stream, "\"items\":%d,\n\"maxitems\":%d,\n", sum.numitems, sum.maxitems);
+    fprintf(stream, "\"secrets\":%d,\n\"maxsecrets\":%d,\n", sum.numsecrets, sum.maxsecrets);
+    fprintf(stream, "\"punchhits\":%d,\n\"punchmisses\":%d,\n", sum.punchhits, sum.punchmisses);
+    fprintf(stream, "\"pistolhits\":%d,\n\"pistolmisses\":%d,\n", sum.pistolhits, sum.pistolmisses);
+    fprintf(stream, "\"frames\":%d\n}", sum.frames);
     fflush(stream);
 
     riv->outcard_len = ftell(stream);
-    fclose(stream);
+
+    if (num_captured_stats > 0 && showstats) {
+        wbstartstruct_t *s = &captured_stats[num_captured_stats - 1];
+        wbplayerstruct_t *p = &s->plyr[0];
+
+        // draw time
+        riv_draw_text("T", RIV_SPRITESHEET_FONT_3X5, RIV_BOTTOMLEFT, 2, 164, 1, 80);
+        int tx = 2 + 4*2;
+        if (num_captured_stats > 1) { // draw global time
+            int total_mins = sum.frames / (60*TICRATE);
+            int total_secs = (sum.frames % (60*TICRATE)) / TICRATE;
+            riv_draw_text(riv_tprintf("%02d:%02d", total_mins, total_secs), RIV_SPRITESHEET_FONT_3X5, RIV_BOTTOMLEFT, tx, 164, 1, 112);
+            tx += 6*4;
+        }
+        // draw level time
+        int level_mins = p->stime / (60*TICRATE);
+        int level_secs = (p->stime % (60*TICRATE)) / TICRATE;
+        int level_centis = ((p->stime % TICRATE) * 100) / TICRATE;
+        riv_draw_text(riv_tprintf("%02d:%02d.%02d", level_mins, level_secs, level_centis), RIV_SPRITESHEET_FONT_3X5, RIV_BOTTOMLEFT, tx, 164, 1, 231);
+
+        // draw kills
+        const char *s1 = riv_tprintf("%d/%d", p->skills, s->maxkills);
+        const char *s2 = riv_tprintf("%d/%d", p->sitems, s->maxitems);
+        const char *s3 = riv_tprintf("%d/%d", p->ssecret, s->maxsecret);
+        riv_draw_text(riv_tprintf("  %-7s    %-7s    %-5s", s1, s2, s3),
+                    RIV_SPRITESHEET_FONT_3X5, RIV_BOTTOMRIGHT, 317, 164, 1, 231);
+        riv_draw_text("K          I          S      ", RIV_SPRITESHEET_FONT_3X5, RIV_BOTTOMRIGHT, 317, 164, 1, 80);
+    }
+
+    if (limitframes > 0) {
+        riv_draw_rect_fill(0, 167, (sum.frames * 320) / limitframes, 1, 80);
+        if (sum.frames > limitframes) {
+            riv->quit = true;
+        }
+    }
+}
+
+void StatInit() {
+    outcardstream = fmemopen(riv->outcard, RIV_SIZE_OUTCARD, "wb");
+    showstats = M_CheckParm("-showstats");
+    int i = M_CheckParmWithArgs("-limitframes", 1);
+    if (i > 0) {
+        limitframes = atoi(myargv[i+1]);
+    }
 }
