@@ -25,9 +25,9 @@ export RIV_REPLAYLOG=/dev/pmem2
 # path to the file that we will save the score json (the output)
 export RIV_OUTCARD=/run/outcard
 
-# uncommenting this will make DOOM now draw any pixel,
+# uncommenting this will make DOOM not draw any pixel,
 # this will make computation much lightweight and faster,
-# but you won't able to capture screenshots of the game framebuffer
+# but you won't be able to capture screenshots of the game framebuffer
 #export RIV_NO_YIELD=y
 
 # compute the gameplay
