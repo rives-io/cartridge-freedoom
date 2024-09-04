@@ -10,6 +10,11 @@ The machine works as follows, it has 4 flash drives:
 3. The *tape* flash drive - Receives a log of keystrokes pressed while playing the game.
 4. The *outcard* flash drive - Outputs the outcome of the given DOOM tape, in case of DOOM is a score in JSON format.
 
+## Requirements
+
+Please make sure to be using a recent `cartesi-machine` (0.17.x or later),
+otherwise it will lack a compatible kernel.
+
 ## Compiling the machine
 
 First make sure you have latest `cartesi-machine`, `make` and `wget` installed in your system, then:
@@ -47,23 +52,47 @@ The JSON score should be similar to:
 ```
 ==== OUTCARD ====
 JSON{
-    "level_stats": [{
-        "name": "E1M1",
-        "pctkills": 34.48,
-        "numkills": 10,
-        "pctitems": 14.29,
-        "numitems": 7,
-        "pctsecrets": 0.00,
-        "numsecrets": 0,
-        "frames": 1354
-    }],
-    "score": 326,
-    "levels": 1,
-    "kills": 15,
-    "items": 7,
-    "secrets": 0,
-    "frames": 1919,
-    "died": true
+"levelstats":[{
+    "name":"E1M1",
+    "kills":10,
+    "maxkills":29,
+    "items":7,
+    "maxitems":49,
+    "secrets":0,
+    "maxsecrets":4,
+    "punchhits":0,
+    "punchmisses":0,
+    "pistolhits":31,
+    "pistolmisses":5,
+    "frames":1354
+}, {
+    "name":"E1M2",
+    "kills":5,
+    "maxkills":93,
+    "items":0,
+    "maxitems":64,
+    "secrets":0,
+    "maxsecrets":7,
+    "punchhits":0,
+    "punchmisses":0,
+    "pistolhits":31,
+    "pistolmisses":5,
+    "frames":564
+}],
+"score":231582,
+"levels":1,
+"maxlevels":2,
+"kills":15,
+"maxkills":122,
+"items":7,
+"maxitems":113,
+"secrets":0,
+"maxsecrets":11,
+"punchhits":0,
+"punchmisses":0,
+"pistolhits":62,
+"pistolmisses":10,
+"frames":1918
 }
 ```
 
