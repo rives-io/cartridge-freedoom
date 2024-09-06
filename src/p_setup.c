@@ -757,6 +757,8 @@ P_SetupLevel
     {
 	players[i].killcount = players[i].secretcount 
 	    = players[i].itemcount = 0;
+        players[i].punchhits = players[i].punchmisses =
+        players[i].pistolhits = players[i].pistolmisses = 0;
     }
 
     // Initial height of PointOfView
